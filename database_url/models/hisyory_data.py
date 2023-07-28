@@ -160,31 +160,31 @@ class ObtDatosBakc(models.Model):
         
  
         try:                           
-                remote_server = database_history_record.url
-                remote_username = database_history_record.ssh_username
-                remote_folder = database_history_record.ssh_path        
+            remote_server = database_history_record.url
+            remote_username = database_history_record.ssh_username
+            remote_folder = database_history_record.ssh_path        
           
-                file_path = self.file_zip
+            file_path = self.file_zip
 
        
-                if not remote_server or not remote_username or not remote_folder or not file_path:
-                    _logger.error("Falta información necesaria en el registro.")
+            if not remote_server or not remote_username or not remote_folder or not file_path:
+                _logger.error("Falta información necesaria en el registro.")
 
-                  
 
-                local_folder = os.path.expanduser('~/Downloads/')
+            local_folder = os.path.expanduser('~/Downloads/')
+
                  
-                scp_command = f"scp -r {username}@{server}:{folder} {local_folder}"
+            scp_command = f"scp -r {username}@{server}:{folder} {local_folder}"
 
     
-                subprocess.run(scp_command, shell=True)
+            subprocess.run(scp_command, shell=True)
 
                   
-                return {
+            return{
                     'type': 'ir.actions.act_url',
                     'url': '/web/content/%s?download=true' % str(self.id),
                     'target': 'self',
-                    }
+            }
 
         except Exception as e:
                
