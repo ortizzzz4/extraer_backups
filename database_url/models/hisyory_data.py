@@ -6,7 +6,7 @@ import base64
 import logging
 import paramiko
 import subprocess
-
+import logging
 from odoo.exceptions import UserError
 
 import os
@@ -151,7 +151,7 @@ class ObtDatosBakc(models.Model):
         # Buscamos el registro específico en 'database.history' que queremos utilizar
         database_history_record = database_history_obj.search([], limit=1)
         if not database_history_record:
-            raise ValueError("No se encontró ningún registro en 'database.history'")
+            _logger.error('datos no encontrados')
         
         dt = self.search([])
         
@@ -189,4 +189,5 @@ class ObtDatosBakc(models.Model):
                     }
 
         except Exception as e:
-                print("Error:", str(e))
+               
+            _logger.error('Error de conexión: %s', str(e))
