@@ -170,15 +170,19 @@ class ObtDatosBakc(models.Model):
 
        
                 if not remote_server or not remote_username or not remote_folder or not file_path:
-                    raise ValueError("Falta información necesaria en el registro.")
+                    _logger.error("Falta información necesaria en el registro.")
 
-                remote_path = f"{remote_username}@{remote_server}:{remote_folder}{file_path}"
-                print(remote_path)
+                  
+
                 local_folder = os.path.expanduser('~/Downloads/')
-                local_path = f"{local_folder}{file_path}"
+                 
+                scp_command = f"scp -r {remote_username}@{remote_server}:{remote_folder} {local_folder}"
+
+    
+                subprocess.run(scp_command, shell=True)
 
      
-                subprocess.run(["scp", remote_path, local_path])
+              
 
         
 
