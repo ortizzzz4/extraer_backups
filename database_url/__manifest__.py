@@ -14,7 +14,9 @@
 
     
     'category': 'backups',
-    'version': '0.1',
+
+    'version': '16.01',
+    'license': 'LGPL-3',
 
    
     'depends': ['base','mail'],

@@ -68,7 +68,7 @@
           <sheet>
             <field name="name"/>
             <field name="url"/>
-            <field name="file_name"/>
+           
             <field name="file_zip"/>
          
           </sheet>
@@ -87,11 +87,14 @@
       <field name="model">obtener.backup</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"/>
-          <field name="url"/>
-          <field name="file_name"/>
+          
+          <field name="url"/>         
           <field name="file_zip"/>
+         
+
           <button name="download_db" type="object" string="Descargar" icon="fa-cloud-download"/>
+          
+         
         </tree>
       </field>
     </record>

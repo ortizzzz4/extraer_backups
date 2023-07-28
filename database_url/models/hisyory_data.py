@@ -131,16 +131,16 @@ class ObtDatosBakc(models.Model):
     _description ="Tablas backups"
     
     name = fields.Char(string="Nombre", readonly=True)
-    file_name = fields.Char(string="filename")
-    file_zip= fields.Char(string="Archivo Zip" , readonly=True)
+   
+    file_zip= fields.Char(string="Backups List" , readonly=True)
     
     record_ids = fields.Many2one('database.history', 'fields')
     
-    url =fields.Char(related='record_ids.url', string='IP', readonly=True)
-    ssh_username=fields.Char(related='record_ids.ssh_username',string="ssh username" ,readonly=True)
-    ssh_path =fields.Char(related='record_ids.ssh_path', string="ssh path", readonly=True)
+    #url =fields.Char(related='record_ids.url', string='IP', readonly=True)
+    #ssh_username=fields.Char(related='record_ids.ssh_username',string="ssh username" ,readonly=True)
+    #ssh_path =fields.Char(related='record_ids.ssh_path', string="ssh path", readonly=True)
     
-    
+    url = fields.Char(string="IP")
    
             
             
