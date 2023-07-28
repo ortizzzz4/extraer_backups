@@ -1,0 +1,143 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="database_url.list">
+      <field name="name">database_url list</field>
+      <field name="model">database.history</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="url"/>
+          <field name="username"/>
+          <field name="password" password="True"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <record id="history_database_form" model="ir.ui.view">
+      <field name="name">history_database.form</field>
+      <field name="model">database.history</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="sftp_fetch_and_save_zip" type="object" string="Extraer Backups"/>
+
+          </header>
+          <sheet>
+            <group>
+
+              <group string="SFTP" >
+                <field name="name" invisible="1"/>
+                <field name="url"/>
+                <field name="port"/>
+                <field name="sftp_path"/>
+                <field name="username"/>
+                <field name="password" password="True"/>              
+              </group>
+              <group string="SSH" >
+                <field name="ssh_username"/>
+                <field name="ssh_path"/>
+              </group>
+
+              
+            </group>
+          
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids"/>
+            <field name="activity_ids"/>
+            <field name="message_ids"/>
+        </div>
+        </form>
+      </field>
+    </record>
+
+    <!-- archivo actions.xml -->
+
+
+
+
+    <record id="lista_form" model="ir.ui.view">
+      <field name="name">lista.form</field>
+      <field name="model">obtener.backup</field>
+      <field name="arch" type="xml">
+        <form string="">
+          <header>
+          </header>
+          <sheet>
+            <field name="name"/>
+            <field name="url"/>
+            <field name="file_name"/>
+            <field name="file_zip"/>
+         
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids"/>
+            <field name="activity_ids"/>
+            <field name="message_ids"/>
+        </div>
+        </form>
+      </field>
+    </record>
+
+
+    <record id="obtner_backups_tree" model="ir.ui.view">
+      <field name="name">obtner_backups.tree</field>
+      <field name="model">obtener.backup</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="url"/>
+          <field name="file_name"/>
+          <field name="file_zip"/>
+          <button name="download_db" type="object" string="Descargar" icon="fa-cloud-download"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="database_url.action_window">
+      <field name="name">Extraer backups</field>
+      <field name="res_model">database.history</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="data_update">
+      <field name="name">Historial de backups</field>
+      <field name="res_model">obtener.backup</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="database_url.action_server">
+      <field name="name">database_url server</field>
+      <field name="model_id" ref="model_database_url_database_url"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+
+    <menuitem name="backups" id="his_data" sequence="1"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Extraer Backups" id="database_url.menu_1" parent="his_data" action="database_url.action_window"/>
+    
+
+    <!-- actions -->
+
+    <menuitem name="Historial" id="database_url.menu_1_list" parent="his_data" action="data_update"/>
+    
+
+  </data>
+</odoo>

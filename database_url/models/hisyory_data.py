@@ -1,0 +1,192 @@
+# -*- coding: utf-8 -*-
+
+from odoo import models, fields, api
+import xmlrpc.client
+import base64
+import logging
+import paramiko
+import subprocess
+
+from odoo.exceptions import UserError
+
+import os
+_logger = logging.getLogger(__name__)
+class HistoyUrlDt(models.Model):
+    _name="database.history"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description="Historial base de datos"
+    
+    
+    name  = fields.Char(string="Username database")
+    
+    url=fields.Char(string="IP", help='0.0.0.0', required=True)
+    port= fields.Char(string="PORT", default="22")
+    username=fields.Char(string="username sftp", required=True) 
+    ssh_username = fields.Char(string="ssh username", default="root")
+    password=fields.Char(string="PASSWORD sftp", required=True)
+    sftp_path=fields.Char(string="file path", help="/path/")
+    ssh_path =fields.Char(string="Ruta de carpeta", help="/home/users/path/")
+    file_na=fields.Char(string="filename")
+    zip_file = fields.Char(string='Archivo ZIP')
+
+    
+    def sftp_fetch_and_save_zip(self):
+        
+        back = self.search([])
+        
+        for backups in back:      
+            try:
+               
+                remote_folder = backups.sftp_path
+                
+                HOST = str(backups.url)#'157.245.84.13'
+                PUERTO = int(backups.port)
+                USUARIO = str( backups.username)#'rocket'
+                PASSWORD = backups.password
+                datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+                client = paramiko.SSHClient()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ 
+                
+                client.connect(**datos)
+                sftp = client.open_sftp()
+
+                files_in_folder = sftp.listdir(remote_folder)
+
+
+                for file_name in files_in_folder:
+                    if file_name.endswith('.zip'):
+                        new_record = self.env['obtener.backup']                
+                        new_record.create({
+                            'url':HOST,
+                            'file_zip': file_name})
+
+           
+                client.close()
+
+
+            except Exception as e:
+                raise UserError("Error:", str(e))
+            
+
+
+    
+        """def extraer_datos(self):
+        my_models = self.search([])
+        if not my_models:
+            return False
+        
+        processed_totals = {}
+     
+        for my_model in my_models:
+            db = my_model.name
+            username = my_model.username
+            url = my_model.url
+            password = my_model.password
+            
+            
+            try:
+                common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(url))
+                models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(url))
+            except Exception as e:
+                _logger.error('Error de conexión: %s', str(e))
+                return True
+            
+            
+            
+            
+            try:
+                uid = common.authenticate(db,username, password ,[])
+            except Exception as e:
+                _logger.error('Error de autenticación en la base de datos %s: %s', db, str(e))
+                continue
+            
+            try:
+                backups = models.execute_kw(db, uid, password, 'db.backup.configure', 'search', [[]])
+                company_ids = models.execute_kw(db, uid, password, 'res.company', 'search', [[]])
+            except Exception as e:
+                _logger.error('Error al obtener datos de la base de datos %s: %s', db, str(e)) 
+                continue
+            
+            for bk in backups:
+                try:
+                    backup = models.execute_kw(db, uid, password, 'db.backup.configure', 'read', [bk, ['backup_filename']])
+                    print(backup)  # Agregar esta línea para inspeccionar el valor de 'backup'
+    
+                    datos = self.env['obtener.backup'].create({
+                    'name': db,
+                    'url': url,
+                    'file_name':backup[0]['backup_filename']
+                        })
+                    _logger.info('Datos guardados')
+                except Exception as e:
+                    _logger.error('Error al leer los datos del movimiento de cuenta en la base de datos %s: %s', db, str(e))
+                    continue
+               
+               """
+               
+class ObtDatosBakc(models.Model):
+    _name = "obtener.backup"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description ="Tablas backups"
+    
+    name = fields.Char(string="Nombre", readonly=True)
+    file_name = fields.Char(string="filename")
+    file_zip= fields.Char(string="Archivo Zip" , readonly=True)
+    
+    record_ids = fields.Many2one('database.history', 'fields')
+    
+    url =fields.Char(related='record_ids.url', string='IP', readonly=True)
+    ssh_username=fields.Char(related='record_ids.ssh_username',string="ssh username" ,readonly=True)
+    ssh_path =fields.Char(related='record_ids.ssh_path', string="ssh path", readonly=True)
+    
+    
+   
+            
+            
+            
+    def download_db(self):
+        database_history_obj = self.env['database.history']
+
+        # Buscamos el registro específico en 'database.history' que queremos utilizar
+        database_history_record = database_history_obj.search([], limit=1)
+        if not database_history_record:
+            raise ValueError("No se encontró ningún registro en 'database.history'")
+        
+        dt = self.search([])
+        
+ 
+        try:                           
+                remote_server = database_history_record.url
+                remote_username = database_history_record.ssh_username
+                remote_folder = database_history_record.ssh_path
+               # file_path = database_history_record.zip_file
+                name = database_history_record.name
+           # local_folder = '/home/luis/Descargas/'
+           
+          
+                file_path = self.file_zip
+                name = self.name
+
+       
+                if not remote_server or not remote_username or not remote_folder or not file_path:
+                    raise ValueError("Falta información necesaria en el registro.")
+
+                remote_path = f"{remote_username}@{remote_server}:{remote_folder}{file_path}"
+                print(remote_path)
+                local_folder = os.path.expanduser('~/Downloads/')
+                local_path = f"{local_folder}{file_path}"
+
+     
+                subprocess.run(["scp", remote_path, local_path])
+
+        
+
+                return {
+                    'type': 'ir.actions.act_url',
+                    'url': '/web/content/%s?download=true' % str(self.id),
+                    'target': 'self',
+                    }
+
+        except Exception as e:
+                print("Error:", str(e))

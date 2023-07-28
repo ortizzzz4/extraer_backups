@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_database_url_database_url,database_url.database_url,model_database_history,base.group_user,1,1,1,1
+acces_obtner_bakc,acces obtner bakc,model_obtener_backup,base.group_user,1,1,1,1
