@@ -147,26 +147,24 @@ class ObtDatosBakc(models.Model):
             
     def download_db(self):
         database_history_obj = self.env['database.history']
+      
+        server = self.record_ids.url
+        username = self.record_ids.ssh_username
+        folder = self.record_ids.ssh_path
 
         # Buscamos el registro específico en 'database.history' que queremos utilizar
         database_history_record = database_history_obj.search([], limit=1)
         if not database_history_record:
             _logger.error('datos no encontrados')
         
-        dt = self.search([])
         
  
         try:                           
                 remote_server = database_history_record.url
                 remote_username = database_history_record.ssh_username
-                remote_folder = database_history_record.ssh_path
-               # file_path = database_history_record.zip_file
-                name = database_history_record.name
-           # local_folder = '/home/luis/Descargas/'
-           
+                remote_folder = database_history_record.ssh_path        
           
                 file_path = self.file_zip
-                name = self.name
 
        
                 if not remote_server or not remote_username or not remote_folder or not file_path:
@@ -176,16 +174,12 @@ class ObtDatosBakc(models.Model):
 
                 local_folder = os.path.expanduser('~/Downloads/')
                  
-                scp_command = f"scp -r {remote_username}@{remote_server}:{remote_folder} {local_folder}"
+                scp_command = f"scp -r {username}@{server}:{folder} {local_folder}"
 
     
                 subprocess.run(scp_command, shell=True)
 
-     
-              
-
-        
-
+                  
                 return {
                     'type': 'ir.actions.act_url',
                     'url': '/web/content/%s?download=true' % str(self.id),
