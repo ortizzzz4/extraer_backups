@@ -192,7 +192,9 @@ class ObtDatosBakc(models.Model):
         REMOTE_FOLDER = remote_folder
        # LOCAL_FOLDER = os.path.expanduser("~/Downloads")
         LOCAL_FOLDER = os.path.expanduser("~/Downloads")
+        _logger.info(LOCAL_FOLDER)
         LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
+        _logger.info(LOCAL_FILE_PATH)
        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
         client = paramiko.SSHClient()
