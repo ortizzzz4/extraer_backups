@@ -190,7 +190,7 @@ class ObtDatosBakc(models.Model):
 
             try:
                 
-                private_key_file = os.path.expanduser('cat /home/rocket/.ssh/authorized_keys')
+                private_key_file = os.path.expanduser('.ssh/new_test2.pub')
                 private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
                 ssh_client.connect(
                                     remote_server, 
