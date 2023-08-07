@@ -185,9 +185,13 @@ class ObtDatosBakc(models.Model):
             local_folder = os.path.expanduser('~/Downloads/')
             ssh_client = paramiko.SSHClient()
             ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            
+            
 
             try:
-                ssh_client.connect(remote_server, username=remote_username)
+                private_key_file = os.path.expanduser('cat ~/.ssh/authorized_keys')
+                private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
+                ssh_client.connect(remote_server, username=remote_username,pkey=private_key)
 
             # Descargar la carpeta .zip desde el servidor remoto
                 zip_file_name = os.path.basename(remote_folder)
