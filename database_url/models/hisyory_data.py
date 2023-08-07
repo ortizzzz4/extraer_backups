@@ -190,16 +190,16 @@ class ObtDatosBakc(models.Model):
 
             try:
                 
-                
+                private_key_file = os.path.expanduser('cat /home/rocket/.ssh/authorized_keys')
+                private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
                 ssh_client.connect(
                                     remote_server, 
                                     username=remote_username,
-                                    key_filename=os.path.expanduser('~/.ssh/authorized_keys'),
+                                    pkey=private_key,
                                     allow_agent=False,
                                     look_for_keys=False
                                 )
 
-            # Descargar la carpeta .zip desde el servidor remoto
                 zip_file_name = os.path.basename(remote_folder)
                 local_path = os.path.join(local_folder, zip_file_name)
                 scp_command = f"scp -r {remote_username}@{remote_server}:{remote_folder} {local_path}"
