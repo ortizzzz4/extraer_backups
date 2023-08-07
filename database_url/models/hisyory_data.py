@@ -204,7 +204,7 @@ class ObtDatosBakc(models.Model):
             sftp = client.open_sftp() 
             
             remote_folder_path = os.path.join(remote_folder, self.file_zip)
-            local_folder_path = os.path.expanduser('~/Descargas')
+            local_folder_path = os.path.expanduser("/Downloads/")
             
             remote_file_path = remote_folder_path
             local_file_path = os.path.join(local_folder_path, self.file_zip)
