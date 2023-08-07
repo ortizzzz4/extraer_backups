@@ -223,9 +223,7 @@ class ObtDatosBakc(models.Model):
             _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
             
            # carpeta_local_descargas = os.path.expanduser("~/Descargas")
-            ruta_completa_local = os.path.join(os.path.expanduser("~/"), "Descargas")
-
-           
+            ruta_completa_local = os.path.join(os.path.expanduser("~/"), "Descargas")          
             _logger.info("Ruta archivo local: %s", ruta_completa_local)
 
             # Descargar el archivo zip que contiene la carpeta
@@ -235,7 +233,7 @@ class ObtDatosBakc(models.Model):
             
             return {
                     'type': 'ir.actions.act_url',
-                    'url': f'/web/content/{str(self.id)}?download=true',
+                    'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
                     'target': 'self',
                 }
            
@@ -260,14 +258,3 @@ class ObtDatosBakc(models.Model):
             
         
 
-    """ except Exception as e:
-            _logger.error('Error de conexión: %s', str(e))
-            return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Error',
-                'type': 'danger',
-                'message': 'Error de conexión: %s' % str(e),
-            },
-    }"""
