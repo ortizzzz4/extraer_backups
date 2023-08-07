@@ -147,7 +147,6 @@ class ObtDatosBakc(models.Model):
             
     def download_db(self):
         database_history_obj = self.env['database.history']
-      
         server = self.record_ids.url
         username = self.record_ids.ssh_username
         folder = self.record_ids.ssh_path
@@ -156,36 +155,111 @@ class ObtDatosBakc(models.Model):
         database_history_record = database_history_obj.search([], limit=1)
         if not database_history_record:
             _logger.error('datos no encontrados')
-        
-        
- 
-        try:                           
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': 'Datos no encontrados en la tabla "database.history".',
+                          },   }
+
+        try:
             remote_server = database_history_record.url
             remote_username = database_history_record.ssh_username
-            remote_folder = database_history_record.ssh_path        
-          
+            remote_folder = database_history_record.ssh_path
             file_path = self.file_zip
 
-       
             if not remote_server or not remote_username or not remote_folder or not file_path:
                 _logger.error("Falta información necesaria en el registro.")
-
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Error',
+                        'type': 'danger',
+                        'message': 'Falta información necesaria en el registro.',
+                },
+            }
 
             local_folder = os.path.expanduser('~/Downloads/')
+            ssh_client = paramiko.SSHClient()
+            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-                 
-            scp_command = f"scp -r {username}@{server}:{folder} {local_folder}"
+            try:
+                ssh_client.connect(remote_server, username=remote_username)
 
-    
-            subprocess.run(scp_command, shell=True)
+            # Descargar la carpeta .zip desde el servidor remoto
+                zip_file_name = os.path.basename(remote_folder)
+                local_path = os.path.join(local_folder, zip_file_name)
+                scp_command = f"scp -r {remote_username}@{remote_server}:{remote_folder} {local_path}"
+                stdin, stdout, stderr = ssh_client.exec_command(scp_command)
+                error_message = stderr.read().decode().strip()
+                print(f"Carpeta descargada: {local_path}")
+                
+                if error_message:
+                    _logger.error(f"Error al descargar el archivo: {error_message}")
+                    return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Error',
+                        'type': 'danger',
+                        'message': f"Error al descargar el archivo: {error_message}",
+                    },
+                }
 
-                  
-            return{
+            # Finalizar la conexión SSH
+                ssh_client.close()
+
+                return {
                     'type': 'ir.actions.act_url',
-                    'url': '/web/content/%s?download=true' % str(self.id),
+                    'url': f'/web/content/{str(self.id)}?download=true',
                     'target': 'self',
             }
 
+            except paramiko.AuthenticationException:
+                _logger.error("Error: Fallo en la autenticación. Verifica las credenciales.")
+                return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': 'Fallo en la autenticación. Verifica las credenciales.',
+                },
+            }
+            except paramiko.SSHException as e:
+                _logger.error(f"Error: Hubo un problema al conectar al servidor SSH - {e}")
+                return {
+                      'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': f"Hubo un problema al conectar al servidor SSH - {e}",
+                },
+            }
+            except Exception as e:
+                _logger.error(f"Error: {e}")
+                return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': f"Error: {e}",
+                },
+            }
+
         except Exception as e:
-               
             _logger.error('Error de conexión: %s', str(e))
+            return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Error',
+                'type': 'danger',
+                'message': 'Error de conexión: %s' % str(e),
+            },
+        }
