@@ -194,7 +194,7 @@ class ObtDatosBakc(models.Model):
         USUARIO = str(username)#'rocket'
         PASSWORD = passw
        
-        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+        datos = dict(hostname=HOST, port=22, username=USUARIO,password=PASSWORD)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
