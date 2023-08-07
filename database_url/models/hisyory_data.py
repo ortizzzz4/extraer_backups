@@ -190,15 +190,11 @@ class ObtDatosBakc(models.Model):
         USUARIO = str(remote_username)#'rocket'
         PASSWORD =remote_password
         REMOTE_FOLDER = remote_folder
+       # LOCAL_FOLDER = os.path.expanduser("~/Downloads")
         LOCAL_FOLDER = os.path.expanduser("~/Downloads")
-
-        REMOTE_FILE_PATH = os.path.join(REMOTE_FOLDER, self.file_zip)
-        _logger.info(REMOTE_FILE_PATH)
         LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
-        _logger.info(LOCAL_FILE_PATH)
        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
-        _logger.info(datos)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
               
@@ -206,10 +202,10 @@ class ObtDatosBakc(models.Model):
         try:
         
             client.connect(**datos)
-            
             sftp = client.open_sftp() 
-            
-            sftp.get(REMOTE_FILE_PATH, LOCAL_FILE_PATH)
+                 
+            remote_file_path = os.path.join(REMOTE_FOLDER, self.file_zip)
+            sftp.get(remote_file_path, LOCAL_FILE_PATH)
             _logger.info("Exito")
 
             # Cerrar la conexión SFTP
