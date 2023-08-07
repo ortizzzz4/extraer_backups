@@ -148,9 +148,10 @@ class ObtDatosBakc(models.Model):
     def download_db(self):
         database_history_obj = self.env['database.history']
         server = self.record_ids.url
-        username = self.record_ids.ssh_username
-        folder = self.record_ids.ssh_path
+        username = self.record_ids.username
+        folder = self.record_ids.sftp_path
         port = self.record_ids.port
+        passw = self.record_ids.password
 
         # Buscamos el registro específico en 'database.history' que queremos utilizar
         database_history_record = database_history_obj.search([], limit=1)
@@ -185,25 +186,28 @@ class ObtDatosBakc(models.Model):
                         'message': 'Falta información necesaria en el registro.',
                 },
             }
-        remote_folder_path = os.path.join(remote_folder, self.file_zip)
-        local_folder_path = os.path.expanduser('/Descargas')
+       
             # Establecer la conexión SFTP al servidor remoto
             
             
             
-        HOST = remote_server#'157.245.84.13'
-        PUERTO =22#int(remote_port)
-        USUARIO = remote_username#'rocket'
-        PASSWORD = remote_password
-       
-        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
         
         try:
-            ssh.connect(**datos)
+            HOST = server#'157.245.84.13'
+            PUERTO =port#int(remote_port)
+            USUARIO = username#'rocket'
+            PASSWORD = passw
+       
+            datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(**datos)
             
-            sftp = ssh.open_sftp() 
+            sftp = client.open_sftp() 
+            
+            remote_folder_path = os.path.join(remote_folder, self.file_zip)
+            local_folder_path = os.path.expanduser('/Descargas')
             
             remote_file_path = remote_folder_path
             local_file_path = os.path.join(local_folder_path, self.file_zip)
@@ -211,7 +215,7 @@ class ObtDatosBakc(models.Model):
 
             # Cerrar la conexión SFTP
             sftp.close()
-            ssh.close()
+            client.close()
                 # Devolver la acción que redirige a la URL de descarga
             return {
                     'type': 'ir.actions.act_url',
