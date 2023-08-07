@@ -165,9 +165,9 @@ class ObtDatosBakc(models.Model):
       
         remote_server = database_history_record.url
         remote_username = database_history_record.username
-        remote_port=database_history_obj.port
+        remote_port=database_history_record.port
         remote_folder = database_history_record.sftp_path
-        remote_password=database_history_obj.password
+        remote_password=database_history_record.password
        #     
        # file_path = self.file_zip
 
@@ -188,14 +188,18 @@ class ObtDatosBakc(models.Model):
         HOST = str(remote_server)#'157.245.84.13'
         PUERTO =int(remote_port)#int(remote_port)
         USUARIO = str(remote_username)#'rocket'
-        PASSWORD ="1234"# str(remote_password)
+        PASSWORD =remote_password
+        REMOTE_FOLDER = remote_folder
+        LOCAL_FOLDER = os.path.expanduser("~/Downloads")
+
+        REMOTE_FILE_PATH = os.path.join(REMOTE_FOLDER, self.file_zip)
+        LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
        
-        datos = dict(hostname=HOST, port=22, username=USUARIO,password=PASSWORD)
+        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
         _logger.info(datos)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            
-        
+              
         
         try:
         
@@ -203,16 +207,12 @@ class ObtDatosBakc(models.Model):
             
             sftp = client.open_sftp() 
             
-            remote_folder_path = os.path.join(remote_folder, self.file_zip)
-            local_folder_path = os.path.expanduser("/Downloads/")
-            
-            remote_file_path = remote_folder_path
-            local_file_path = os.path.join(local_folder_path, self.file_zip)
-            sftp.get(remote_file_path, local_file_path)
+            sftp.get(REMOTE_FILE_PATH, LOCAL_FILE_PATH)
+            _logger.info("Exito")
 
             # Cerrar la conexión SFTP
             
-            sftp.close()
+          
                 # Devolver la acción que redirige a la URL de descarga
             return {
                     'type': 'ir.actions.act_url',
@@ -230,6 +230,7 @@ class ObtDatosBakc(models.Model):
                     'message': f'Error: {e}',
                           },   }
         finally:
+            sftp.close()
             client.close()
         
 
