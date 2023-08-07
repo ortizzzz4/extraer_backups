@@ -25,9 +25,10 @@ class HistoyUrlDt(models.Model):
     ssh_username = fields.Char(string="ssh username", default="root")
     password=fields.Char(string="PASSWORD sftp", required=True)
     sftp_path=fields.Char(string="file path", help="/path/")
-    ssh_path =fields.Char(string="Ruta de carpeta", help="/home/users/path/")
+    ssh_path =fields.Char(string="Ruta a guardar", help="/home/users/path/")
     file_na=fields.Char(string="filename")
     zip_file = fields.Char(string='Archivo ZIP')
+    
 
     
     def sftp_fetch_and_save_zip(self):
