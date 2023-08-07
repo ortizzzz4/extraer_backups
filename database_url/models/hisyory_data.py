@@ -164,13 +164,16 @@ class ObtDatosBakc(models.Model):
                     'message': 'Datos no encontrados en la tabla "database.history".',
                           },   }
 
-        try:
-            remote_server = database_history_record.url
-            remote_username = database_history_record.ssh_username
-            remote_folder = database_history_record.ssh_path
-            file_path = self.file_zip
+      
+        remote_server = database_history_record.url
+        remote_username = database_history_record.username
+        remote_port=database_history_obj.port
+        remote_folder = database_history_record.sftp_path
+        remote_password=database_history_obj.password
+            
+        file_path = self.file_zip
 
-            if not remote_server or not remote_username or not remote_folder or not file_path:
+        if not remote_server or not remote_username or not remote_folder or not file_path:
                 _logger.error("Falta información necesaria en el registro.")
                 return {
                     'type': 'ir.actions.client',
@@ -181,88 +184,44 @@ class ObtDatosBakc(models.Model):
                         'message': 'Falta información necesaria en el registro.',
                 },
             }
-
-            local_folder = os.path.expanduser('~/Downloads/')
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        remote_folder_path = os.path.join(remote_folder, self.file_zip)
+        local_folder_path = os.path.expanduser('/Descargas')
+            # Establecer la conexión SFTP al servidor remoto
             
             
+            
+        HOST = str(remote_server)#'157.245.84.13'
+        PUERTO = int(remote_port)
+        USUARIO = str(remote_username)#'rocket'
+        PASSWORD = remote_password
+       
+        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
+        ssh.connect(**datos)
+        sftp = ssh.open_sftp()
 
-            try:
-                
-                private_key_file = os.path.expanduser('cat /home/rocket/.ssh/new_test2')
-                private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
-                ssh_client.connect(
-                                    remote_server, 
-                                    username=remote_username,
-                                    pkey=private_key,
-                                    allow_agent=False,
-                                    look_for_keys=False
-                                )
+        
+        remote_file_path = remote_folder_path
+        local_file_path = os.path.join(local_folder_path, self.file_zip)
+        sftp.get(remote_file_path, local_file_path)
 
-                zip_file_name = os.path.basename(remote_folder)
-                local_path = os.path.join(local_folder, zip_file_name)
-                scp_command = f"scp -r {remote_username}@{remote_server}:{remote_folder} {local_path}"
-                stdin, stdout, stderr = ssh_client.exec_command(scp_command)
-                error_message = stderr.read().decode().strip()
-                print(f"Carpeta descargada: {local_path}")
-                
-                if error_message:
-                    _logger.error(f"Error al descargar el archivo: {error_message}")
-                    return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': 'Error',
-                        'type': 'danger',
-                        'message': f"Error al descargar el archivo: {error_message}",
-                    },
-                }
-
-            # Finalizar la conexión SSH
-                ssh_client.close()
-
-                return {
+            # Cerrar la conexión SFTP
+        sftp.close()
+        ssh.close()
+                # Devolver la acción que redirige a la URL de descarga
+        return {
                     'type': 'ir.actions.act_url',
                     'url': f'/web/content/{str(self.id)}?download=true',
                     'target': 'self',
-            }
+                }
+            
+            
+            
+        
 
-            except paramiko.AuthenticationException:
-                _logger.error("Error: Fallo en la autenticación. Verifica las credenciales.")
-                return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': 'Fallo en la autenticación. Verifica las credenciales.',
-                },
-            }
-            except paramiko.SSHException as e:
-                _logger.error(f"Error: Hubo un problema al conectar al servidor SSH - {e}")
-                return {
-                      'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': f"Hubo un problema al conectar al servidor SSH - {e}",
-                },
-            }
-            except Exception as e:
-                _logger.error(f"Error: {e}")
-                return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': f"Error: {e}",
-                },
-            }
-
-        except Exception as e:
+    """ except Exception as e:
             _logger.error('Error de conexión: %s', str(e))
             return {
             'type': 'ir.actions.client',
@@ -272,4 +231,4 @@ class ObtDatosBakc(models.Model):
                 'type': 'danger',
                 'message': 'Error de conexión: %s' % str(e),
             },
-        }
+    }"""
