@@ -192,7 +192,7 @@ class ObtDatosBakc(models.Model):
             
             
         HOST = remote_server#'157.245.84.13'
-        PUERTO =int(remote_port)
+        PUERTO =22#int(remote_port)
         USUARIO = remote_username#'rocket'
         PASSWORD = remote_password
        
