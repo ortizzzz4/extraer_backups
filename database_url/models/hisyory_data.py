@@ -231,11 +231,11 @@ class ObtDatosBakc(models.Model):
                 _logger.info("Carpeta descargada como %s", self.file_zip)
 
             
-                return {
-                    'type': 'ir.actions.act_url',
-                    'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
-                    'target': 'self',
-                }
+              #  return {
+               #     'type': 'ir.actions.act_url',
+                #    'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
+                #    'target': 'self',
+                #}
            
         except Exception as e:
             return {
