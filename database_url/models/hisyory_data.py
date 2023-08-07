@@ -191,7 +191,14 @@ class ObtDatosBakc(models.Model):
             try:
                 private_key_file = os.path.expanduser('cat ~/.ssh/authorized_keys')
                 private_key = paramiko.RSAKey.from_private_key_file(private_key_file)
-                ssh_client.connect(remote_server, username=remote_username,pkey=private_key)
+                
+                ssh_client.connect(
+                                    remote_server, 
+                                    username=remote_username,
+                                    pkey=private_key,
+                                    allow_agent=False,
+                                    look_for_keys=False
+                                )
 
             # Descargar la carpeta .zip desde el servidor remoto
                 zip_file_name = os.path.basename(remote_folder)
