@@ -147,11 +147,7 @@ class ObtDatosBakc(models.Model):
             
     def download_db(self):
         database_history_obj = self.env['database.history']
-        server = self.record_ids.url
-        username = self.record_ids.username
-        folder = self.record_ids.sftp_path
-        port = self.record_ids.port
-        passw = self.record_ids.password
+      
 
         # Buscamos el registro específico en 'database.history' que queremos utilizar
         database_history_record = database_history_obj.search([], limit=1)
@@ -192,7 +188,7 @@ class ObtDatosBakc(models.Model):
         HOST = str(remote_server)#'157.245.84.13'
         PUERTO =int(remote_port)#int(remote_port)
         USUARIO = str(remote_username)#'rocket'
-        PASSWORD = remote_password
+        PASSWORD = str(remote_password)
        
         datos = dict(hostname=HOST, port=22, username=USUARIO,password=PASSWORD)
         _logger.info(datos)
