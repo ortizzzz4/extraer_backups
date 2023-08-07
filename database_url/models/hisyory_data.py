@@ -226,7 +226,7 @@ class ObtDatosBakc(models.Model):
                 'params': {
                     'title': 'Error',
                     'type': 'danger',
-                    'message': 'Error: %s' + e,
+                    'message': f'Error: {e}',
                           },   }
 
         
