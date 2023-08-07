@@ -221,7 +221,7 @@ class ObtDatosBakc(models.Model):
             _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
             
             carpeta_local_descargas = os.path.expanduser("~/Descargas")
-            ruta_completa_local = os.path.join(carpeta_local_descargas, self.file_zip)
+            ruta_completa_local = os.path.join(carpeta_local_descargas)
             _logger.info("Ruta carpeta local: %s", ruta_completa_local)
 
             # Descargar el archivo zip que contiene la carpeta
