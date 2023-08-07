@@ -140,7 +140,7 @@ class ObtDatosBakc(models.Model):
     #ssh_username=fields.Char(related='record_ids.ssh_username',string="ssh username" ,readonly=True)
     #ssh_path =fields.Char(related='record_ids.ssh_path', string="ssh path", readonly=True)
     
-    url = fields.Char(string="IP")
+    url = fields.Char(string="IP", readonly=True)
    
             
             
