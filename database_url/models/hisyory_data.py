@@ -190,8 +190,8 @@ class ObtDatosBakc(models.Model):
             # Establecer la conexión SFTP al servidor remoto
             
         HOST = str(server)#'157.245.84.13'
-        PUERTO =port#int(remote_port)
-        USUARIO = username#'rocket'
+        PUERTO =int(port)#int(remote_port)
+        USUARIO = str(username)#'rocket'
         PASSWORD = passw
        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
