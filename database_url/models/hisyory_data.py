@@ -189,40 +189,40 @@ class ObtDatosBakc(models.Model):
        
             # Establecer la conexión SFTP al servidor remoto
             
-            
+        HOST = server#'157.245.84.13'
+        PUERTO =port#int(remote_port)
+        USUARIO = username#'rocket'
+        PASSWORD = passw
+       
+        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
         
         
         try:
-            HOST = server#'157.245.84.13'
-            PUERTO =port#int(remote_port)
-            USUARIO = username#'rocket'
-            PASSWORD = passw
-       
-            datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
-            client = paramiko.SSHClient()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
             client.connect(**datos)
             
             sftp = client.open_sftp() 
             
             remote_folder_path = os.path.join(remote_folder, self.file_zip)
-            local_folder_path = os.path.expanduser('/Descargas')
+            local_folder_path = os.path.expanduser('~/Descargas')
             
             remote_file_path = remote_folder_path
             local_file_path = os.path.join(local_folder_path, self.file_zip)
             sftp.get(remote_file_path, local_file_path)
 
             # Cerrar la conexión SFTP
+            
             sftp.close()
-            client.close()
                 # Devolver la acción que redirige a la URL de descarga
             return {
                     'type': 'ir.actions.act_url',
                     'url': f'/web/content/{str(self.id)}?download=true',
                     'target': 'self',
                 }
-        
+           
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -232,7 +232,8 @@ class ObtDatosBakc(models.Model):
                     'type': 'danger',
                     'message': f'Error: {e}',
                           },   }
-
+        finally:
+            client.close()
         
 
         
