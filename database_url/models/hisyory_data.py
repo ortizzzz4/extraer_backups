@@ -150,6 +150,7 @@ class ObtDatosBakc(models.Model):
         server = self.record_ids.url
         username = self.record_ids.ssh_username
         folder = self.record_ids.ssh_path
+        port = self.record_ids.port
 
         # Buscamos el registro específico en 'database.history' que queremos utilizar
         database_history_record = database_history_obj.search([], limit=1)
@@ -199,23 +200,39 @@ class ObtDatosBakc(models.Model):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
-        ssh.connect(**datos)
-        sftp = ssh.open_sftp()
-
-        
-        remote_file_path = remote_folder_path
-        local_file_path = os.path.join(local_folder_path, self.file_zip)
-        sftp.get(remote_file_path, local_file_path)
+        try:
+            ssh.connect(**datos)
+            
+            sftp = ssh.open_sftp() 
+            
+            remote_file_path = remote_folder_path
+            local_file_path = os.path.join(local_folder_path, self.file_zip)
+            sftp.get(remote_file_path, local_file_path)
 
             # Cerrar la conexión SFTP
-        sftp.close()
-        ssh.close()
+            sftp.close()
+            ssh.close()
                 # Devolver la acción que redirige a la URL de descarga
-        return {
+            return {
                     'type': 'ir.actions.act_url',
                     'url': f'/web/content/{str(self.id)}?download=true',
                     'target': 'self',
                 }
+        
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': 'Error: %s' + e,
+                          },   }
+
+        
+
+        
+      
             
             
             
