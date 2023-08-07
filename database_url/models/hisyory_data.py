@@ -191,9 +191,9 @@ class ObtDatosBakc(models.Model):
             
             
             
-        HOST = str(remote_server)#'157.245.84.13'
-        PUERTO =22 #int(remote_port)
-        USUARIO = str(remote_username)#'rocket'
+        HOST = remote_server#'157.245.84.13'
+        PUERTO =remote_port
+        USUARIO = remote_username#'rocket'
         PASSWORD = remote_password
        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
