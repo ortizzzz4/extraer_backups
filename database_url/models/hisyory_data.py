@@ -193,6 +193,7 @@ class ObtDatosBakc(models.Model):
         LOCAL_FOLDER = os.path.expanduser("~/Downloads")
 
         REMOTE_FILE_PATH = os.path.join(REMOTE_FOLDER, self.file_zip)
+        _logger.info(REMOTE_FILE_PATH)
         LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
