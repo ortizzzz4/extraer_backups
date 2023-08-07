@@ -218,7 +218,7 @@ class ObtDatosBakc(models.Model):
                  
             ruta_completa_remota = os.path.join(REMOTE_FOLDER, self.file_zip)
             _logger.info(ruta_completa_remota)
-            ruta_completa_local = LOCAL_FOLDER#os.path.join(LOCAL_FOLDER)
+            ruta_completa_local = (LOCAL_FOLDER, self.file_zip)#os.path.join(LOCAL_FOLDER)
             _logger.info(ruta_completa_local)
             
             sftp.get(ruta_completa_remota, ruta_completa_local)
