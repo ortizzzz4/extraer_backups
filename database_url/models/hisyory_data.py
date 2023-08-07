@@ -219,9 +219,13 @@ class ObtDatosBakc(models.Model):
           
             ruta_completa_remota = os.path.join(REMOTE_FOLDER, self.file_zip)
             _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
+            
+            carpeta_local_descargas = os.path.expanduser("~/Descargas")
+            ruta_completa_local = os.path.join(carpeta_local_descargas, self.file_zip)
+            _logger.info("Ruta carpeta local: %s", ruta_completa_local)
 
             # Descargar el archivo zip que contiene la carpeta
-            sftp.get(ruta_completa_remota, self.file_zip)
+            sftp.get(ruta_completa_remota, ruta_completa_local)
             _logger.info("Carpeta descargada como %s", self.file_zip)
 
             
