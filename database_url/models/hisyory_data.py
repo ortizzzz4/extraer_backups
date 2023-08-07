@@ -203,7 +203,7 @@ class ObtDatosBakc(models.Model):
         REMOTE_FOLDER = remote_folder
        # LOCAL_FOLDER = os.path.expanduser("~/Downloads")
       #  LOCAL_FOLDER = remoto_path
-        LOCAL_FOLDER = os.path.join(str(Path.home()), "Downloads")
+        LOCAL_FOLDER = os.path.join(str(Path.home()), "Downloads/")
 
         
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
