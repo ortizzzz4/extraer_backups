@@ -205,10 +205,7 @@ class ObtDatosBakc(models.Model):
       #  LOCAL_FOLDER = remoto_path
         LOCAL_FOLDER = os.path.join(str(Path.home()), "Downloads")
 
-        _logger.info(LOCAL_FOLDER)
-        LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
-        _logger.info(LOCAL_FILE_PATH)
-       
+        
         datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -219,14 +216,14 @@ class ObtDatosBakc(models.Model):
             client.connect(**datos)
             sftp = client.open_sftp() 
                  
-            remote_file_path = os.path.join(REMOTE_FOLDER, self.file_zip)
-            sftp.get(remote_file_path, LOCAL_FILE_PATH)
+            ruta_completa_remota = os.path.join(REMOTE_FOLDER, self.file_zip)
+            _logger.info(ruta_completa_remota)
+            ruta_completa_local = os.path.join(LOCAL_FOLDER, self.file_zip)
+            _logger.info(ruta_completa_local)
+            
+            sftp.get(ruta_completa_remota, ruta_completa_local)
             _logger.info("Exito")
 
-            # Cerrar la conexión SFTP
-            
-          
-                # Devolver la acción que redirige a la URL de descarga
             return {
                     'type': 'ir.actions.act_url',
                     'url': f'/web/content/{str(self.id)}?download=true',
