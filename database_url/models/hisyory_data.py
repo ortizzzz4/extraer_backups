@@ -216,14 +216,15 @@ class ObtDatosBakc(models.Model):
             client.connect(**datos)
             sftp = client.open_sftp() 
                  
+          
             ruta_completa_remota = os.path.join(REMOTE_FOLDER, self.file_zip)
-            _logger.info("Ruta remota: %s", ruta_completa_remota)
-            ruta_completa_local = os.path.join(LOCAL_FOLDER, self.file_zip)
-            _logger.info("Ruta local: %s", ruta_completa_local)
+            _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
 
-            sftp.get(ruta_completa_remota, ruta_completa_local)
-            _logger.info("Exito")
+            # Descargar el archivo zip que contiene la carpeta
+            sftp.get(ruta_completa_remota, self.file_zip)
+            _logger.info("Carpeta descargada como %s", self.file_zip)
 
+            
             return {
                     'type': 'ir.actions.act_url',
                     'url': f'/web/content/{str(self.id)}?download=true',
