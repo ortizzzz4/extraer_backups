@@ -217,7 +217,7 @@ class ObtDatosBakc(models.Model):
             sftp = client.open_sftp() 
                  
           
-            ruta_completa_remota = (REMOTE_FOLDER, self.file_zip)
+            ruta_completa_remota = (REMOTE_FOLDER + self.file_zip)
             _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
             
             #carpeta_local_descargas = os.path.expanduser("~/Descargas")
