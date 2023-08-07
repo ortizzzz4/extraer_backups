@@ -8,6 +8,7 @@ import paramiko
 import subprocess
 import logging
 from odoo.exceptions import UserError
+from pathlib import Path
 
 import os
 _logger = logging.getLogger(__name__)
@@ -61,6 +62,14 @@ class HistoyUrlDt(models.Model):
                         new_record.create({
                             'url':HOST,
                             'file_zip': file_name})
+                        return {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                    'title': 'Exito',
+                    'message': 'Extraidos con èxito',
+                    'sticky': False,
+                          },   }
 
            
                 client.close()
@@ -169,6 +178,7 @@ class ObtDatosBakc(models.Model):
         remote_port=database_history_record.port
         remote_folder = database_history_record.sftp_path
         remote_password=database_history_record.password
+        remoto_path = database_history_record.ssh_path
        #     
        # file_path = self.file_zip
 
@@ -192,7 +202,9 @@ class ObtDatosBakc(models.Model):
         PASSWORD =remote_password
         REMOTE_FOLDER = remote_folder
        # LOCAL_FOLDER = os.path.expanduser("~/Downloads")
-        LOCAL_FOLDER = os.path.expanduser("~/Downloads")
+      #  LOCAL_FOLDER = remoto_path
+        LOCAL_FOLDER = os.path.join(str(Path.home()), "Downloads")
+
         _logger.info(LOCAL_FOLDER)
         LOCAL_FILE_PATH = os.path.join(LOCAL_FOLDER, self.file_zip)
         _logger.info(LOCAL_FILE_PATH)
