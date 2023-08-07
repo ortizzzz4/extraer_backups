@@ -172,20 +172,20 @@ class ObtDatosBakc(models.Model):
         remote_port=database_history_obj.port
         remote_folder = database_history_record.sftp_path
         remote_password=database_history_obj.password
-            
-        file_path = self.file_zip
+       #     
+       # file_path = self.file_zip
 
-        if not remote_server or not remote_username or not remote_folder or not file_path:
-                _logger.error("Falta información necesaria en el registro.")
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': 'Error',
-                        'type': 'danger',
-                        'message': 'Falta información necesaria en el registro.',
-                },
-            }
+      #  if not remote_server or not remote_username or not remote_folder or not file_path:
+       #         _logger.error("Falta información necesaria en el registro.")
+        #        return {
+         #           'type': 'ir.actions.client',
+         #           'tag': 'display_notification',
+          #          'params': {
+          #              'title': 'Error',
+          #              'type': 'danger',
+          #              'message': 'Falta información necesaria en el registro.',
+          #      },
+          #  }
        
             # Establecer la conexión SFTP al servidor remoto
             
@@ -195,6 +195,7 @@ class ObtDatosBakc(models.Model):
         PASSWORD = passw
        
         datos = dict(hostname=HOST, port=22, username=USUARIO,password=PASSWORD)
+        _logger.info(datos)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
