@@ -292,7 +292,9 @@ class ObtDatosBakc(models.Model):
             def download_recursive(remote_path, local_path):
                 for item in sftp.listdir_attr(remote_path):
                     remote_item_path = os.path.join(remote_path, item.filename)
+                    _logger.info(remote_item_path)
                     local_item_path = os.path.join(local_path, item.filename)
+                    _logger.info(local_item_path)
 
                     if S_ISDIR(item.st_mode):
                         os.makedirs(local_item_path, exist_ok=True)
