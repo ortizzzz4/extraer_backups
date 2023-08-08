@@ -267,7 +267,7 @@ class ObtDatosBakc(models.Model):
             return
 
         # Leer el contenido del archivo .zip
-        zip_data = self.file_zip_field.read()
+        zip_data = self.file_zip.read()
         with io.BytesIO(zip_data) as zip_stream:
             with zipfile.ZipFile(zip_stream, 'r') as zip_ref:
                 # Obtener una lista de nombres de archivos en el archivo .zip
