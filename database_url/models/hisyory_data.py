@@ -10,7 +10,9 @@ import logging
 from odoo.exceptions import UserError
 from pathlib import Path
 from stat import S_ISDIR
+import io
 
+import zipfile
 
 import pwd
 import os
@@ -257,63 +259,36 @@ class ObtDatosBakc(models.Model):
         
   
     def download_selected_folder(self):
-        self.ensure_one()  # Asegura que solo estamos operando en un único registro
-        database_history_obj = self.env['database.history']
-      
-
-        # Buscamos el registro específico en 'database.history' que queremos utilizar
-        database_history_record = database_history_obj.search([], limit=1)
-        
-        remote_server = database_history_record.url
-        remote_username = database_history_record.username
-        ssh_user=database_history_record.ssh_username
-        remote_port=database_history_record.port
-        remote_folder = database_history_record.sftp_path
-        remote_password=database_history_record.password
-        remoto_path = database_history_record.ssh_path
-        
-
-        hostname = str(remote_server)
-        port = int(remote_port)
-        username = str(remote_username)
-        password = remote_password
-        remote_base_folder = remote_folder # Ruta base de los backups en el servidor remoto
-        local_folder = "/home/luis/Descargas/"  # Ruta local donde se guardarán los backups
-        
+       
         selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
 
-        #remote_folder = os.path.join(remote_base_folder, selected_folder)
-        #transport = paramiko.Transport((hostname, port))
-        #transport.connect(username=ssh_user, password=password)
-        
-        
-        # Comando scp para descargar el archivo ZIP en el cliente local
-        #scp_command = f'scp -r {ssh_user}@{hostname}:{remoto_path + selected_folder} {local_folder}'
-      #  scp_command = f"scp -r {ssh_user}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}" 
-       # _logger.info(scp_command)
-     #   try:
-            #subprocess.run(scp_command, check=True)
-         #   os.system(scp_command)
-        #    
-            # Generar la acción de redirección a la URL de descarga en Odoo
-        return {
-                'type': 'ir.actions.act_url',
-                'url': f'/web/content/{str(self.id)}/{selected_folder}?download=true',
-                'target': 'self',
-            }
-      #  except subprocess.CalledProcessError as e:
-            # Manejar errores si el comando scp falla
-       #     return {
-        #        'type': 'ir.actions.client',
-         #       'tag': 'display_notification',
-          #      'params': {
-           #         'title': 'Error',
-            #        'type': 'danger',
-             #       'message': f'Error: {e}',
-              #            },   }       
-        #finally:
-        #   transport.close()
+        # Comprobar si selected_folder es un archivo .zip
+        if not selected_folder.endswith('.zip'):
+            return
 
+        # Leer el contenido del archivo .zip
+        zip_data = self.file_zip_field.read()
+        with io.BytesIO(zip_data) as zip_stream:
+            with zipfile.ZipFile(zip_stream, 'r') as zip_ref:
+                # Obtener una lista de nombres de archivos en el archivo .zip
+                file_names = zip_ref.namelist()
+
+                # Generar un nuevo archivo .zip con el contenido completo
+                with io.BytesIO() as new_zip_stream:
+                    with zipfile.ZipFile(new_zip_stream, 'w') as new_zip_ref:
+                        for file_name in file_names:
+                            file_data = zip_ref.read(file_name)
+                            new_zip_ref.writestr(file_name, file_data)
+
+                    # Leer el contenido del nuevo archivo .zip y codificarlo en base64
+                    new_zip_data = new_zip_stream.getvalue()
+                    encoded_zip_data = base64.b64encode(new_zip_data).decode()
+
+                    return {
+                        'type': 'ir.actions.act_url',
+                        'url': f'data:application/zip;base64,{encoded_zip_data}',
+                        'target': 'new',
+                    }
             
             
         
