@@ -291,7 +291,7 @@ class ObtDatosBakc(models.Model):
         scp_command = f'scp -r {ssh_user}@{hostname}:{remoto_path + selected_folder} {local_folder}'
         _logger.info(scp_command)
         try:
-            os.system(scp_command)
+            subprocess.run(scp_command, check=True)
             
             # Generar la acción de redirección a la URL de descarga en Odoo
             return {
@@ -299,15 +299,8 @@ class ObtDatosBakc(models.Model):
                 'url': f'/web/content/{str(self.id)}/{selected_folder}?download=true',
                 'target': 'self',
             }
-              
-           
-            
-           # """return {
-             #      'type': 'ir.actions.act_url',
-              #     'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
-             #       'target': 'self',
-           # }"""
-        except Exception as e:
+        except subprocess.CalledProcessError as e:
+            # Manejar errores si el comando scp falla
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
