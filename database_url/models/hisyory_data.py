@@ -286,31 +286,34 @@ class ObtDatosBakc(models.Model):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         try:
+          
             client.connect(hostname, port=port, username=username, password=password)
             sftp = client.open_sftp()
 
-            def download_recursive(remote_path, local_path):
-                for item in sftp.listdir_attr(remote_path):
-                    remote_item_path = os.path.join(remote_path, item.filename)
-                    _logger.info(remote_item_path)
-                    local_item_path = os.path.join(local_path, item.filename)
-                    _logger.info(local_item_path)
+            for item in sftp.listdir_attr(remote_folder):
+                remote_item_path = os.path.join(remote_folder, item.filename)
+                _logger.info(remote_item_path)
+                local_item_path = os.path.join(local_folder, item.filename)
+                _logger.info(local_item_path)
 
-                    if S_ISDIR(item.st_mode):
-                        os.makedirs(local_item_path, exist_ok=True)
-                        download_recursive(remote_item_path, local_item_path)
-                    else:
-                        sftp.get(remote_item_path, local_item_path)
-
-            download_recursive(remote_folder, local_folder)
+                if S_ISDIR(item.st_mode):
+                    os.makedirs(local_item_path, exist_ok=True)
+                    for sub_item in sftp.listdir_attr(remote_item_path):
+                        remote_sub_item_path = os.path.join(remote_item_path, sub_item.filename)
+                        _logger.info(remote_sub_item_path)
+                        local_sub_item_path = os.path.join(local_item_path, sub_item.filename)
+                        _logger.info(local_sub_item_path)
+                      
+                        if not S_ISDIR(sub_item.st_mode):
+                            sftp.get(remote_sub_item_path, local_sub_item_path)
+                else:
+                    sftp.get(remote_item_path, local_item_path)
 
             sftp.close()
         except Exception as e:
             _logger.info("Error:", str(e))
         finally:
             client.close()
-
-            
             
             
         
