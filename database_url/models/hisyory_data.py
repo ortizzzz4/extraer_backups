@@ -264,37 +264,12 @@ class ObtDatosBakc(models.Model):
         selected_zip_name = self.file_zip  # Nombre del archivo .zip
 
         # Comprobar si selected_zip_name tiene extensión .zip
-        if not selected_zip_name.endswith('.zip'):
-            return
+       
 
-        # Buscar el archivo .zip en los adjuntos de Odoo
-        attachment = self.env['ir.attachment'].search([('name', '=', selected_zip_name)], limit=1)
-
-        if not attachment:
-            return
-
-        # Leer el contenido del archivo .zip adjunto
-        zip_data = base64.b64decode(attachment.datas)
-        with io.BytesIO(zip_data) as zip_stream:
-            with zipfile.ZipFile(zip_stream, 'r') as zip_ref:
-                # Obtener una lista de nombres de archivos en el archivo .zip
-                file_names = zip_ref.namelist()
-
-                # Generar un nuevo archivo .zip con el contenido completo
-                with io.BytesIO() as new_zip_stream:
-                    with zipfile.ZipFile(new_zip_stream, 'w') as new_zip_ref:
-                        for file_name in file_names:
-                            file_data = zip_ref.read(file_name)
-                            new_zip_ref.writestr(file_name, file_data)
-
-                    # Leer el contenido del nuevo archivo .zip y codificarlo en base64
-                    new_zip_data = new_zip_stream.getvalue()
-                    encoded_zip_data = base64.b64encode(new_zip_data).decode()
-
-                    return {
-                        'type': 'ir.actions.act_url',
-                        'url':f'/web/content/{str(self.id)}/{encoded_zip_data}?download=true',
-                        'target': 'self',
+        return {
+                'type': 'ir.actions.act_url',
+                'url':f'/web/binary/{str(self.id)}/{selected_zip_name}?download=true',
+                'target': 'self',
                     }
             
             
