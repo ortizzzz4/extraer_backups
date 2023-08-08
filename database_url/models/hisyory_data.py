@@ -270,6 +270,7 @@ class ObtDatosBakc(models.Model):
         remote_folder = database_history_record.sftp_path
         remote_password=database_history_record.password
         remoto_path = database_history_record.ssh_path
+        remoto_path_ssh= database_history_record.ssh_path
 
         hostname = str(remote_server)
         port = int(remote_port)
@@ -292,7 +293,7 @@ class ObtDatosBakc(models.Model):
             
            # sftp.get(remote_zip, local_zip_path)
          
-            file_path = remote_base_folder + selected_folder
+            file_path = remoto_path_ssh + selected_folder
             result = None
             with open(file_path , 'rb') as reader:
                 result = base64.b64encode(reader.read())
