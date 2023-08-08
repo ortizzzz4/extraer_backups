@@ -283,8 +283,8 @@ class ObtDatosBakc(models.Model):
         selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
 
         #remote_folder = os.path.join(remote_base_folder, selected_folder)
-        transport = paramiko.Transport((hostname, port))
-        transport.connect(username=ssh_user, password=password)
+        #transport = paramiko.Transport((hostname, port))
+        #transport.connect(username=ssh_user, password=password)
         
         
         # Comando scp para descargar el archivo ZIP en el cliente local
@@ -316,8 +316,8 @@ class ObtDatosBakc(models.Model):
                     'type': 'danger',
                     'message': f'Error: {e}',
                           },   }       
-        finally:
-           transport.close()
+        #finally:
+        #   transport.close()
 
             
             
