@@ -287,10 +287,18 @@ class ObtDatosBakc(models.Model):
             sftp = paramiko.SFTPClient.from_transport(transport)
             remote_zip = os.path.join(remote_base_folder, selected_folder)
             _logger.info(remote_zip)
-            local_zip_path = os.path.join(local_folder)
+            local_zip_path = os.path.join("/home/luis/Descargas", selected_folder)
             _logger.info(local_zip_path)
+            
+           
     
             sftp.get(remote_zip, local_zip_path)
+            
+            return {
+                   'type': 'ir.actions.act_url',
+                   'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
+                    'target': 'self',
+            }
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
