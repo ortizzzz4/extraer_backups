@@ -260,14 +260,21 @@ class ObtDatosBakc(models.Model):
   
     def download_selected_folder(self):
        
-        selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
+        
+        selected_zip_name = self.file_zip  # Nombre del archivo .zip
 
-        # Comprobar si selected_folder es un archivo .zip
-        if not selected_folder.endswith('.zip'):
+        # Comprobar si selected_zip_name tiene extensión .zip
+        if not selected_zip_name.endswith('.zip'):
             return
 
-        # Leer el contenido del archivo .zip
-        zip_data = self.file_zip.read()
+        # Buscar el archivo .zip en los adjuntos de Odoo
+        attachment = self.env['ir.attachment'].search([('file_zip', '=', selected_zip_name)], limit=1)
+
+        if not attachment:
+            return
+
+        # Leer el contenido del archivo .zip adjunto
+        zip_data = base64.b64decode(attachment.datas)
         with io.BytesIO(zip_data) as zip_stream:
             with zipfile.ZipFile(zip_stream, 'r') as zip_ref:
                 # Obtener una lista de nombres de archivos en el archivo .zip
