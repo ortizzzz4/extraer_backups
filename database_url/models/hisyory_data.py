@@ -285,20 +285,40 @@ class ObtDatosBakc(models.Model):
         transport.connect(username=username, password=password)
         try:
             sftp = paramiko.SFTPClient.from_transport(transport)
-            remote_zip = os.path.join(remote_base_folder, selected_folder)
-            _logger.info(remote_zip)
-            local_zip_path = os.path.join("/home/luis/Descargas", selected_folder)
-            _logger.info(local_zip_path)
+            #remote_zip = os.path.join(remote_base_folder, selected_folder)
+            #_logger.info(remote_zip)
+           # local_zip_path = os.path.join("/home/luis/Descargas", selected_folder)
+           # _logger.info(local_zip_path)
+            
+           # sftp.get(remote_zip, local_zip_path)
+         
+            file_path = remote_base_folder + selected_folder
+            result = None
+            with open(file_path , 'rb') as reader:
+                result = base64.b64encode(reader.read())
+            attachment_obj = self.env['ir.attachment'].sudo()
+            name = selected_folder
+            attachment_id = attachment_obj.create({
+            'name': name,
+            'datas': result,
+            'public': False
+        })
+            download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+            return {
+            'type': 'ir.actions.act_url',
+            'url': download_url,
+            'target': 'new',
+        }
             
            
     
-            sftp.get(remote_zip, local_zip_path)
+           
             
-            return {
-                   'type': 'ir.actions.act_url',
-                   'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
-                    'target': 'self',
-            }
+           # """return {
+             #      'type': 'ir.actions.act_url',
+              #     'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
+             #       'target': 'self',
+           # }"""
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
