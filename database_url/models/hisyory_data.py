@@ -270,49 +270,35 @@ class ObtDatosBakc(models.Model):
         remote_folder = database_history_record.sftp_path
         remote_password=database_history_record.password
         remoto_path = database_history_record.ssh_path
-        remoto_path_ssh= database_history_record.ssh_path
+        
 
         hostname = str(remote_server)
         port = int(remote_port)
         username = str(remote_username)
         password = remote_password
         remote_base_folder = remote_folder # Ruta base de los backups en el servidor remoto
-        local_folder = remoto_path  # Ruta local donde se guardarán los backups
-
+        local_folder = "/home/luis/Descargas/"  # Ruta local donde se guardarán los backups
+        
         selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
 
         #remote_folder = os.path.join(remote_base_folder, selected_folder)
         transport = paramiko.Transport((hostname, port))
         transport.connect(username=username, password=password)
+        
+        
+        # Comando scp para descargar el archivo ZIP en el cliente local
+        scp_command = f'scp -r {username}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}'
+        
         try:
-            sftp = paramiko.SFTPClient.from_transport(transport)
-            #remote_zip = os.path.join(remote_base_folder, selected_folder)
-            #_logger.info(remote_zip)
-           # local_zip_path = os.path.join("/home/luis/Descargas", selected_folder)
-           # _logger.info(local_zip_path)
+            os.system(scp_command)
             
-           # sftp.get(remote_zip, local_zip_path)
-         
-            file_path = remoto_path_ssh + selected_folder
-            result = None
-            with open(file_path , 'rb') as reader:
-                result = base64.b64encode(reader.read())
-            attachment_obj = self.env['ir.attachment'].sudo()
-            name = selected_folder
-            attachment_id = attachment_obj.create({
-            'name': name,
-            'datas': result,
-            'public': False
-        })
-            download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+            # Generar la acción de redirección a la URL de descarga en Odoo
             return {
-            'type': 'ir.actions.act_url',
-            'url': download_url,
-            'target': 'new',
-        }
-            
-           
-    
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/{str(self.id)}/{selected_folder}?download=true',
+                'target': 'self',
+            }
+              
            
             
            # """return {
@@ -329,9 +315,7 @@ class ObtDatosBakc(models.Model):
                     'type': 'danger',
                     'message': f'Error: {e}',
                           },   }       
-        finally:
-            sftp.close()
-            transport.close()
+        
 
             
             
