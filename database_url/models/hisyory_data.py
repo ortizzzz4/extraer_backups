@@ -283,18 +283,26 @@ class ObtDatosBakc(models.Model):
         #remote_folder = os.path.join(remote_base_folder, selected_folder)
         transport = paramiko.Transport((hostname, port))
         transport.connect(username=username, password=password)
-
-        sftp = paramiko.SFTPClient.from_transport(transport)
-
-        remote_zip = os.path.join(remote_base_folder, selected_folder)
-        _logger.info(remote_zip)
-        local_zip_path = os.path.join(local_folder, selected_folder)
-        _logger.info(local_zip_path)
+        try:
+            sftp = paramiko.SFTPClient.from_transport(transport)
+            remote_zip = os.path.join(remote_base_folder, selected_folder)
+            _logger.info(remote_zip)
+            local_zip_path = os.path.join(local_folder, selected_folder)
+            _logger.info(local_zip_path)
     
-        sftp.get(remote_zip, local_zip_path)
-    
-        sftp.close()
-        transport.close()
+            sftp.get(remote_zip, local_zip_path)
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': f'Error: {e}',
+                          },   }       
+        finally:
+            sftp.close()
+            transport.close()
 
             
             
