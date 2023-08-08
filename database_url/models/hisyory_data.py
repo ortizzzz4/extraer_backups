@@ -293,7 +293,8 @@ class ObtDatosBakc(models.Model):
                     f"scp -r {ssh_user}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}" ]
         _logger.info(scp_command)
         try:
-            subprocess.run(scp_command, check=True)
+            #subprocess.run(scp_command, check=True)
+            os.system(scp_command)
             
             # Generar la acción de redirección a la URL de descarga en Odoo
             return {
