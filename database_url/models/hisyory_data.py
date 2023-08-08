@@ -268,7 +268,7 @@ class ObtDatosBakc(models.Model):
             return
 
         # Buscar el archivo .zip en los adjuntos de Odoo
-        attachment = self.env['ir.attachment'].search([('file_zip', '=', selected_zip_name)], limit=1)
+        attachment = self.env['ir.attachment'].search([('name', '=', selected_zip_name)], limit=1)
 
         if not attachment:
             return
