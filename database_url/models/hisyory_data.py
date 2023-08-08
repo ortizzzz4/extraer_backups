@@ -69,7 +69,7 @@ class HistoyUrlDt(models.Model):
                                 'type': 'ir.actions.client',
                                 'tag': 'display_notification',
                                 'params': {
-                    'title': 'Exito',
+                    'title': 'Completado!!!',
                     'message': 'Extraidos con èxito',
                     'sticky': False,
                           },   }
@@ -254,7 +254,7 @@ class ObtDatosBakc(models.Model):
         
 
         
-    @api.model
+  
     def download_selected_folder(self):
         self.ensure_one()  # Asegura que solo estamos operando en un único registro
         database_history_obj = self.env['database.history']
