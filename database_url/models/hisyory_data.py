@@ -288,7 +288,7 @@ class ObtDatosBakc(models.Model):
         
         # Comando scp para descargar el archivo ZIP en el cliente local
         scp_command = f'scp -r {username}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}'
-        
+        _logger.info(scp_command)
         try:
             os.system(scp_command)
             
@@ -315,7 +315,8 @@ class ObtDatosBakc(models.Model):
                     'type': 'danger',
                     'message': f'Error: {e}',
                           },   }       
-        
+        finally:
+           transport.close()
 
             
             
