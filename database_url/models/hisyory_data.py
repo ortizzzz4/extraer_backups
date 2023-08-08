@@ -268,7 +268,7 @@ class ObtDatosBakc(models.Model):
 
         return {
                 'type': 'ir.actions.act_url',
-                'url':f'/web/binary/{str(self.id)}/{selected_zip_name}?download=true',
+                'url':f'/web/attachment/{str(self.id)}/{selected_zip_name}?download=true',
                 'target': 'self',
                     }
             
