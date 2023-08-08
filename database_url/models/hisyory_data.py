@@ -85,7 +85,7 @@ class HistoyUrlDt(models.Model):
 
 
     
-        """def extraer_datos(self):
+    """def extraer_datos(self):
         my_models = self.search([])
         if not my_models:
             return False
@@ -280,41 +280,22 @@ class ObtDatosBakc(models.Model):
 
         selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
 
-        remote_folder = os.path.join(remote_base_folder, selected_folder)
+        #remote_folder = os.path.join(remote_base_folder, selected_folder)
+        transport = paramiko.Transport((hostname, port))
+        transport.connect(username=username, password=password)
 
-        client = paramiko.SSHClient()
-        client.load_system_host_keys()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        sftp = paramiko.SFTPClient.from_transport(transport)
 
-        try:
-          
-            client.connect(hostname, port=port, username=username, password=password)
-            sftp = client.open_sftp()
+        remote_zip = os.path.join(remote_base_folder, selected_folder)
+        _logger.info(remote_zip)
+        local_zip_path = os.path.join(local_folder, selected_folder)
+        _logger.info(local_zip_path)
+    
+        sftp.get(remote_zip, local_zip_path)
+    
+        sftp.close()
+        transport.close()
 
-            for item in sftp.listdir_attr(remote_folder):
-                remote_item_path = os.path.join(remote_folder, item.filename)
-                _logger.info(remote_item_path)
-                local_item_path = os.path.join(local_folder, item.filename)
-                _logger.info(local_item_path)
-
-                if S_ISDIR(item.st_mode):
-                    os.makedirs(local_item_path, exist_ok=True)
-                    for sub_item in sftp.listdir_attr(remote_item_path):
-                        remote_sub_item_path = os.path.join(remote_item_path, sub_item.filename)
-                        _logger.info(remote_sub_item_path)
-                        local_sub_item_path = os.path.join(local_item_path, sub_item.filename)
-                        _logger.info(local_sub_item_path)
-                      
-                        if not S_ISDIR(sub_item.st_mode):
-                            sftp.get(remote_sub_item_path, local_sub_item_path)
-                else:
-                    sftp.get(remote_item_path, local_item_path)
-
-            sftp.close()
-        except Exception as e:
-            _logger.info("Error:", str(e))
-        finally:
-            client.close()
             
             
         
