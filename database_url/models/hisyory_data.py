@@ -293,7 +293,7 @@ class ObtDatosBakc(models.Model):
 
                     return {
                         'type': 'ir.actions.act_url',
-                        'url': f'data:application/zip;base64,{encoded_zip_data}',
+                        'url':f'/web/content/{str(self.id)}/{encoded_zip_data}?download=true',
                         'target': 'new',
                     }
             
