@@ -9,6 +9,8 @@ import subprocess
 import logging
 from odoo.exceptions import UserError
 from pathlib import Path
+from stat import S_ISDIR
+
 
 import pwd
 import os
@@ -227,7 +229,7 @@ class ObtDatosBakc(models.Model):
                 _logger.info("Ruta archivo local: %s", ruta_completa_local)
 
                  # Descargar el archivo zip que contiene la carpeta
-                sftp.get(ruta_completa_remota, ruta_completa_local)
+                client.get(ruta_completa_remota, ruta_completa_local)
                 _logger.info("Carpeta descargada como %s", self.file_zip)
 
             
@@ -252,7 +254,60 @@ class ObtDatosBakc(models.Model):
         
 
         
+    @api.model
+    def download_selected_folder(self):
+        self.ensure_one()  # Asegura que solo estamos operando en un único registro
+        database_history_obj = self.env['database.history']
       
+
+        # Buscamos el registro específico en 'database.history' que queremos utilizar
+        database_history_record = database_history_obj.search([], limit=1)
+        
+        remote_server = database_history_record.url
+        remote_username = database_history_record.username
+        remote_port=database_history_record.port
+        remote_folder = database_history_record.sftp_path
+        remote_password=database_history_record.password
+        remoto_path = database_history_record.ssh_path
+
+        hostname = str(remote_server)
+        port = int(remote_port)
+        username = str(remote_username)
+        password = remote_password
+        remote_base_folder = remote_folder # Ruta base de los backups en el servidor remoto
+        local_folder = remoto_path  # Ruta local donde se guardarán los backups
+
+        selected_folder = self.file_zip  # Nombre de la carpeta seleccionada
+
+        remote_folder = os.path.join(remote_base_folder, selected_folder)
+
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        try:
+            client.connect(hostname, port=port, username=username, password=password)
+            sftp = client.open_sftp()
+
+            def download_recursive(remote_path, local_path):
+                for item in sftp.listdir_attr(remote_path):
+                    remote_item_path = os.path.join(remote_path, item.filename)
+                    local_item_path = os.path.join(local_path, item.filename)
+
+                    if S_ISDIR(item.st_mode):
+                        os.makedirs(local_item_path, exist_ok=True)
+                        download_recursive(remote_item_path, local_item_path)
+                    else:
+                        sftp.get(remote_item_path, local_item_path)
+
+            download_recursive(remote_folder, local_folder)
+
+            sftp.close()
+        except Exception as e:
+            _logger.info("Error:", str(e))
+        finally:
+            client.close()
+
             
             
             
