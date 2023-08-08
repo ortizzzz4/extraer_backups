@@ -65,7 +65,14 @@ class HistoyUrlDt(models.Model):
                         new_record.create({
                             'url':HOST,
                             'file_zip': file_name})
-                        return {
+                
+           
+                client.close()
+
+
+            except Exception as e:
+                raise UserError("Error:", str(e))
+        return {
                                 'type': 'ir.actions.client',
                                 'tag': 'display_notification',
                                 'params': {
@@ -74,12 +81,6 @@ class HistoyUrlDt(models.Model):
                     'sticky': False,
                           },   }
 
-           
-                client.close()
-
-
-            except Exception as e:
-                raise UserError("Error:", str(e))
             
 
 
