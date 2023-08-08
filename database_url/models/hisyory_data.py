@@ -266,6 +266,7 @@ class ObtDatosBakc(models.Model):
         
         remote_server = database_history_record.url
         remote_username = database_history_record.username
+        ssh_user=database_history_record.ssh_username
         remote_port=database_history_record.port
         remote_folder = database_history_record.sftp_path
         remote_password=database_history_record.password
@@ -283,11 +284,11 @@ class ObtDatosBakc(models.Model):
 
         #remote_folder = os.path.join(remote_base_folder, selected_folder)
         transport = paramiko.Transport((hostname, port))
-        transport.connect(username=username, password=password)
+        transport.connect(username=ssh_user, password=password)
         
         
         # Comando scp para descargar el archivo ZIP en el cliente local
-        scp_command = f'scp -r {username}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}'
+        scp_command = f'scp -r {ssh_user}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}'
         _logger.info(scp_command)
         try:
             os.system(scp_command)
