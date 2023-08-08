@@ -289,28 +289,28 @@ class ObtDatosBakc(models.Model):
         
         # Comando scp para descargar el archivo ZIP en el cliente local
         #scp_command = f'scp -r {ssh_user}@{hostname}:{remoto_path + selected_folder} {local_folder}'
-        scp_command = f"scp -r {ssh_user}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}" 
-        _logger.info(scp_command)
-        try:
+      #  scp_command = f"scp -r {ssh_user}@{hostname}:{os.path.join(remoto_path, selected_folder)} {local_folder}" 
+       # _logger.info(scp_command)
+     #   try:
             #subprocess.run(scp_command, check=True)
-            os.system(scp_command)
-            
+         #   os.system(scp_command)
+        #    
             # Generar la acción de redirección a la URL de descarga en Odoo
-            return {
+        return {
                 'type': 'ir.actions.act_url',
                 'url': f'/web/content/{str(self.id)}/{selected_folder}?download=true',
                 'target': 'self',
             }
-        except subprocess.CalledProcessError as e:
+      #  except subprocess.CalledProcessError as e:
             # Manejar errores si el comando scp falla
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': f'Error: {e}',
-                          },   }       
+       #     return {
+        #        'type': 'ir.actions.client',
+         #       'tag': 'display_notification',
+          #      'params': {
+           #         'title': 'Error',
+            #        'type': 'danger',
+             #       'message': f'Error: {e}',
+              #            },   }       
         #finally:
         #   transport.close()
 
