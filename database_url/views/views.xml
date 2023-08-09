@@ -38,6 +38,7 @@
               <group string="SSH" >
                 <field name="ssh_username"/>
                 <field name="ssh_path"/>
+                <field name="pkey_private" attrs="{'invisible': [('id', '!=', False)], 'readonly': [('id', '!=', False)]}"/>
               </group>
 
               

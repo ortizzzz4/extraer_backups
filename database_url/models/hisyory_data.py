@@ -30,8 +30,10 @@ class HistoyUrlDt(models.Model):
     username=fields.Char(string="username sftp", required=True) 
     ssh_username = fields.Char(string="ssh username", default="root")
     password=fields.Char(string="PASSWORD sftp", required=True)
-    sftp_path=fields.Char(string="file path", help="/path/")
-    ssh_path =fields.Char(string="Ruta a guardar", help="/home/users/path/")
+    sftp_path=fields.Char(string="file path sftp", help="/path/")
+    ssh_path =fields.Char(string="file path ssh", help="/home/users/path/")
+    pkey_private = fields.Text(string="Clave privada")
+    password_pkey=fields.Char(string="Password pkey")
     file_na=fields.Char(string="filename")
     zip_file = fields.Char(string='Archivo ZIP')
     
@@ -159,109 +161,56 @@ class ObtDatosBakc(models.Model):
     url = fields.Char(string="IP", readonly=True)
    
             
-            
-            
-    def download_db(self):
-        database_history_obj = self.env['database.history']
-      
-
-        # Buscamos el registro específico en 'database.history' que queremos utilizar
-        database_history_record = database_history_obj.search([], limit=1)
-        if not database_history_record:
-            _logger.error('datos no encontrados')
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': 'Datos no encontrados en la tabla "database.history".',
-                          },   }
-
-      
-        remote_server = database_history_record.url
-        remote_username = database_history_record.username
-        remote_port=database_history_record.port
-        remote_folder = database_history_record.sftp_path
-        remote_password=database_history_record.password
-        remoto_path = database_history_record.ssh_path
-       #     
-       # file_path = self.file_zip
-
-      #  if not remote_server or not remote_username or not remote_folder or not file_path:
-       #         _logger.error("Falta información necesaria en el registro.")
-        #        return {
-         #           'type': 'ir.actions.client',
-         #           'tag': 'display_notification',
-          #          'params': {
-          #              'title': 'Error',
-          #              'type': 'danger',
-          #              'message': 'Falta información necesaria en el registro.',
-          #      },
-          #  }
-       
-            # Establecer la conexión SFTP al servidor remoto
-            
-        HOST = str(remote_server)#'157.245.84.13'
-        PUERTO =int(remote_port)#int(remote_port)
-        USUARIO = str(remote_username)#'rocket'
-        PASSWORD =remote_password
-        REMOTE_FOLDER = remote_folder
-       # LOCAL_FOLDER = os.path.expanduser("~/Downloads")
-        LOCAL_FOLDER = remoto_path
-      #  LOCAL_FOLDER = os.path.join(str(Path.home()), "Downloads")
-
-        
-        datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-              
-        
-        try:
-        
-            client.connect(**datos)
-            #sftp = client.open_sftp() 
-          
-                 
-            with client.open_sftp() as sftp:
-                ruta_completa_remota = (REMOTE_FOLDER + self.file_zip)
-                _logger.info("Ruta carpeta remota: %s", ruta_completa_remota)
-            
-                # carpeta_local_descargas = os.path.expanduser("~/Descargas")
-                ruta_completa_local = os.path.join(os.path.expanduser("~/"), "Descargas")          
-                _logger.info("Ruta archivo local: %s", ruta_completa_local)
-
-                 # Descargar el archivo zip que contiene la carpeta
-                client.get(ruta_completa_remota, ruta_completa_local)
-                _logger.info("Carpeta descargada como %s", self.file_zip)
-
-            
-              #  return {
-               #     'type': 'ir.actions.act_url',
-                #    'url': f'/web/content/{str(self.id)}/{self.file_zip}?download=true',
-                #    'target': 'self',
-                #}
-           
-        except Exception as e:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error',
-                    'type': 'danger',
-                    'message': f'Error: {e}',
-                          },   }
-        finally:
-            sftp.close()
-            client.close()
-        
-
-        
+    
   
     def download_selected_folder(self):
-       
+        database_history_obj = self.env['database.history']
+      
+        # Buscamos el registro específico en 'database.history' que queremos utilizar
+        database_history_record = database_history_obj.search([], limit=1)
         
         selected_zip_name = self.file_zip  # Nombre del archivo .zip
+        
+        ip_server = database_history_record.url
+        username=database_history_record.ssh_username
+        file_path = database_history_record.ssh_path
+        pkey_private = database_history_record.pkey_private
+        password_pke = database_history_record.password_pkey
+        
+        download_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+
+        HOST=ip_server
+        USERNAME = username
+        PORT=22
+       
+        
+        private_key = paramiko.RSAKey(file_obj=io.StringIO(pkey_private),password=password_pke)
+       
+        
+        datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
+        try:
+            client.connect(**datos)
+            
+            comando_cp = f"scp -r {USERNAME}@{HOST}:{file_path + selected_zip_name } {download_folder}"
+            stdin, stdout, stderr = client.exec_command(comando_cp)
+            
+            exit_status = stdout.channel.recv_exit_status()
+            
+            if exit_status == 0:
+                _logger.info("exitosamente.")
+
+        except paramiko.AuthenticationException:
+            _logger.exception("Error de autenticación. Verifica las credenciales SSH.")
+        except paramiko.SSHException as e:
+            _logger.exception("Error al establecer la conexión SSH:", str(e))
+        except Exception as e:
+            _logger.exception("Ocurrió un error:", str(e))
+        finally:
+            client.close()
+        
 
         # Comprobar si selected_zip_name tiene extensión .zip
        
