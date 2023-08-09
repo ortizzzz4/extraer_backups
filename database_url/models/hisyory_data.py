@@ -219,15 +219,35 @@ class ObtDatosBakc(models.Model):
             client.close()
         
 
-        # Comprobar si selected_zip_name tiene extensión .zip
-       
 
        # return {
         #        'type': 'ir.actions.act_url',
          #       'url':f'/web/content/{str(self.id)}/{selected_zip_name}?download=true',
           #      'target': 'self',
            #         }
-            
+   
+    def file_zip(self):
+        
+        zip_file = self.file_zip
+        
+        
+        result = None
+        with open(zip_file, "w", encoding="utf-8") as reader:
+            result = base64.b64encode(reader.read())
+        attachment_obj = self.env['ir.attachment'].sudo()
+        name = self.file_zip
+        attachment_id = attachment_obj.create({
+            'name': name,
+            'datas': result,
+            'public': False
+        })
+        download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+        return {
+            'type': 'ir.actions.act_url',
+            'url': download_url,
+            'target': 'self',
+        }
+        
             
         
 
