@@ -181,6 +181,7 @@ class ObtDatosBakc(models.Model):
         password_pke = database_history_record.password_pkey
         
         download_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+        ruta_destino = "/home/luis/Descargas/"
 
         HOST=ip_server
         USERNAME = username
@@ -198,7 +199,7 @@ class ObtDatosBakc(models.Model):
         try:
             client.connect(**datos)
             
-            comando_cp = f"scp -r {USERNAME}@{HOST}:{file_path + selected_zip_name } {download_folder}"
+            comando_cp = f"scp -r {USERNAME}@{HOST}:{file_path + selected_zip_name } {ruta_destino}"
             stdin, stdout, stderr = client.exec_command(comando_cp)
             
             exit_status = stdout.channel.recv_exit_status()
