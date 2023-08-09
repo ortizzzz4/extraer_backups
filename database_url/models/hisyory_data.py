@@ -64,11 +64,14 @@ class HistoyUrlDt(models.Model):
 
 
                 for file_name in files_in_folder:
-                    if file_name.endswith('.zip'):
-                        new_record = self.env['obtener.backup']                
-                        new_record.create({
-                            'url':HOST,
-                            'file_zip': file_name})
+                    if file_name.endswith('.zip'):              
+                        existing_record = self.env['obtener.backup'].search([('file_zip','=' ,file_name)])           
+                        if not existing_record:
+                            self.env['obtener.backup'].create({
+                                'url':HOST,
+                                'file_zip': file_name,                           
+                                })
+                            _logger.info('Datos guardados')
                 
            
                 client.close()
