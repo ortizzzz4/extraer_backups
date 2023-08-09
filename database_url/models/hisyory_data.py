@@ -226,7 +226,7 @@ class ObtDatosBakc(models.Model):
           #      'target': 'self',
            #         }
    
-    def file_zip(self):
+    def file_zip_dow(self):
         
         zip_file = self.file_zip
         
