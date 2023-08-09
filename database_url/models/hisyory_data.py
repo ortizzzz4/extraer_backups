@@ -197,23 +197,24 @@ class ObtDatosBakc(models.Model):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         try:
+             
             client.connect(**datos)
-            
-            comando_cp = f"scp -r {USERNAME}@{HOST}:{file_path + selected_zip_name } {ruta_destino}"
+
+            comando_cp = f"scp -P {PORT} -r {USERNAME}@{HOST}:{file_path}/{selected_zip_name} {ruta_destino}"
             _logger.info(comando_cp)
             stdin, stdout, stderr = client.exec_command(comando_cp)
-            
+
             exit_status = stdout.channel.recv_exit_status()
-            
+
             if exit_status == 0:
-                _logger.info("exitosamente.")
+                _logger.info("Descarga exitosa.")
 
         except paramiko.AuthenticationException:
             _logger.exception("Error de autenticación. Verifica las credenciales SSH.")
         except paramiko.SSHException as e:
-            _logger.exception("Error al establecer la conexión SSH:", str(e))
+            _logger.exception("Error al establecer la conexión SSH: %s", str(e))
         except Exception as e:
-            _logger.exception("Ocurrió un error:", str(e))
+            _logger.exception("Ocurrió un error: %s", str(e))
         finally:
             client.close()
         
