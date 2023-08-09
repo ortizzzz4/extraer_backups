@@ -191,6 +191,7 @@ class ObtDatosBakc(models.Model):
        
         
         datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
+        _logger.info(datos)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
