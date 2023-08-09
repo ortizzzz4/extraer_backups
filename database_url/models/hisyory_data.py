@@ -218,11 +218,11 @@ class ObtDatosBakc(models.Model):
         # Comprobar si selected_zip_name tiene extensión .zip
        
 
-        return {
-                'type': 'ir.actions.act_url',
-                'url':f'/web/attachment/{str(self.id)}/{selected_zip_name}?download=true',
-                'target': 'self',
-                    }
+       # return {
+        #        'type': 'ir.actions.act_url',
+         #       'url':f'/web/content/{str(self.id)}/{selected_zip_name}?download=true',
+          #      'target': 'self',
+           #         }
             
             
         
