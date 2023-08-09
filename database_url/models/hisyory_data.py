@@ -200,6 +200,7 @@ class ObtDatosBakc(models.Model):
             client.connect(**datos)
             
             comando_cp = f"scp -r {USERNAME}@{HOST}:{file_path + selected_zip_name } {ruta_destino}"
+            _logger.info(comando_cp)
             stdin, stdout, stderr = client.exec_command(comando_cp)
             
             exit_status = stdout.channel.recv_exit_status()
