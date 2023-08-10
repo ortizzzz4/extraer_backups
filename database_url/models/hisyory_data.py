@@ -227,28 +227,27 @@ class ObtDatosBakc(models.Model):
            #         }
    
     def file_zip_dow(self):
-        
-        zip_file = self.file_zip
-        
-        
-        result = None
-        with open(zip_file, "w", encoding="utf-8") as reader:
-            result = base64.b64encode(reader.read())
-            _logger.info(result)
-        attachment_obj = self.env['ir.attachment'].sudo()
-        name = self.file_zip
-        attachment_id = attachment_obj.create({
-            'name': name,
-            'datas': result,
-            'public': False
-        })
-        download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
-        return {
-            'type': 'ir.actions.act_url',
-            'url': download_url,
-            'target': 'self',
-        }
-        
-            
-        
+        for rec in self:
+            zip_file = rec.file_zip
 
+            # Leer el archivo y codificarlo en base64
+            with open(zip_file, "rb") as reader:
+                result = base64.b64encode(reader.read())
+
+            attachment_obj = self.env['ir.attachment'].sudo()
+            name = zip_file
+            attachment_id = attachment_obj.create({
+                'name': name,
+                'datas': result,
+                'public': False,
+                'res_model': 'obtener.backup',  # Reemplaza 'tu.modelo' con el nombre de tu modelo
+                'res_id': rec.id,
+                'mimetype': 'application/zip',  # Cambiar según el tipo de archivo
+            })
+
+            download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+            return {
+                'type': 'ir.actions.act_url',
+                'url': download_url,
+                'target': 'self',
+            }
