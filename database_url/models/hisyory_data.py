@@ -234,6 +234,7 @@ class ObtDatosBakc(models.Model):
         result = None
         with open(zip_file, "w", encoding="utf-8") as reader:
             result = base64.b64encode(reader.read())
+            _logger.info(result)
         attachment_obj = self.env['ir.attachment'].sudo()
         name = self.file_zip
         attachment_id = attachment_obj.create({
