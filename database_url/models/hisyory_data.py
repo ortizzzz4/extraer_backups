@@ -240,7 +240,7 @@ class ObtDatosBakc(models.Model):
                 'name': name,
                 'datas': result,
                 'public': False,
-                'res_model': 'obtener.backup',  # Reemplaza 'tu.modelo' con el nombre de tu modelo
+               # 'res_model': 'obtener.backup',  # Reemplaza 'tu.modelo' con el nombre de tu modelo
                 'res_id': rec.id,
                 'mimetype': 'application/zip',  # Cambiar según el tipo de archivo
             })
