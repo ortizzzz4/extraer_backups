@@ -228,7 +228,7 @@ class ObtDatosBakc(models.Model):
    
     def file_zip_dow(self):
         for rec in self:
-            zip_file = "/home/layen/backups" + rec.file_zip
+            zip_file = "/home/layen/backups/" + rec.file_zip
 
             # Leer el archivo y codificarlo en base64
             with open(zip_file, "rb") as reader:
