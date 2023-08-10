@@ -231,7 +231,7 @@ class ObtDatosBakc(models.Model):
             zip_file = rec.file_zip
 
             # Leer el archivo y codificarlo en base64
-            with open(zip_file, "rb") as reader:
+            with open(zip_file, "rb", encoding="utf-8") as reader:
                 result = base64.b64encode(reader.read())
 
             attachment_obj = self.env['ir.attachment'].sudo()
