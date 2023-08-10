@@ -228,10 +228,10 @@ class ObtDatosBakc(models.Model):
    
     def file_zip_dow(self):
         for rec in self:
-            zip_file = rec.file_zip
+            zip_file = "/home/layen/backups" / rec.file_zip
 
             # Leer el archivo y codificarlo en base64
-            with open(zip_file, "rb", encoding="utf-8") as reader:
+            with open(zip_file, "rb") as reader:
                 result = base64.b64encode(reader.read())
 
             attachment_obj = self.env['ir.attachment'].sudo()
