@@ -89,9 +89,20 @@
             <button string="Guardar" name="Guardar" type="object" class="oe_highlight"/>
           </header>
           <sheet>
-            <field name="name"/>
-            <field name="pkey_private" attrs="{'invisible': [('pkey_private','!=',False)]}" />
-            <field name="password_pkey" password="True"/>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="password_pkey" password="True"/>
+              </group>
+              <group>
+                <field name="pkey_private" attrs="{'invisible': [('pkey_private','!=',False)]}" />
+              </group>
+
+
+            </group>
+
+           
+           
           </sheet>
         </form>
       </field>
