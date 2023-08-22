@@ -251,3 +251,30 @@ class ObtDatosBakc(models.Model):
                 'url': download_url,
                 'target': 'self',
             }
+            
+class AddPkey(models.Model):
+    _name = "add.pkey.ids"
+    _description = "Guardar Clave privada"
+    
+   
+    name = fields.Char(string="nombre")
+    pkey_private = fields.Text(string="Clave privada")
+    password_pkey=fields.Char(string="password pkey")
+    edit = fields.Boolean(default=True)
+    
+    
+    def create_dt(self):
+        existing_record = self.search([
+            ('name', '=', self.name),  
+            ('pkey_private', '=', self.pkey_private),
+            ('password_pkey', '=', self.password_pkey)
+        ])
+        
+        if not existing_record:
+            self.create({
+                'name': self.name,
+                'pkey_private': self.pkey_private,
+                'password_pkey': self.password_pkey,
+                'edit':False
+            })
+    
