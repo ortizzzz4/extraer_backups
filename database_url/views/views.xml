@@ -158,7 +158,7 @@
     <!-- actions -->
 
     <menuitem name="Historial" id="database_url.menu_1_list" parent="his_data" action="data_update"/>
-    <menuitem name="Clave ssh" id="database_url.menu_1_list" parent="his_data" action="ssh_id"/>
+    <menuitem name="Clave ssh" id="ssh_id" parent="his_data" action="ssh_id"/>
 
 
 
