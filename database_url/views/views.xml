@@ -38,8 +38,9 @@
               <group string="SSH" >
                 <field name="ssh_username"/>
                 <field name="ssh_path"/>
+                <field name="ssh_ids"/>
                 <field name="password_pkey" password="True"/>
-                <field name="pkey_private" attrs="{'invisible': [('id', '!=', False)], 'readonly': [('id', '!=', False)]}"/>
+               
               </group>
 
               
@@ -79,6 +80,37 @@
       </field>
     </record>
 
+    <record id="add_ids_pke_form" model="ir.ui.view">
+      <field name="name">Guardar Clave privada database url</field>
+      <field name="model">add.pkey.ids</field>
+      <field name="arch" type="xml">
+        <form string="">
+          <header>
+            <button string="Guardar" name="Guardar" type="object" class="oe_highlight"/>
+          </header>
+          <sheet>
+            <field name="name"/>
+            <field name="pkey_private" attrs="{'invisible': [('pkey_private','!=',False)]}" />
+            <field name="password_pkey" password="True"/>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="add_id_tree" model="ir.ui.view">
+      <field name="name">Guardar Clave privada database url</field>
+      <field name="model">add.pkey.ids</field>
+      <field name="arch" type="xml">
+        <tree string="">
+          <field name="name"/>
+            <field name="password_pkey" password="True"/>
+        </tree>
+      </field>
+    </record>
+
+
+
+
     <record model="ir.actions.act_window" id="database_url.action_window">
       <field name="name">Extraer backups</field>
       <field name="res_model">database.history</field>
@@ -89,6 +121,12 @@
       <field name="name">Historial de backups</field>
       <field name="res_model">obtener.backup</field>
       <field name="view_mode">tree</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="ssh_id">
+      <field name="name">Guardar Clave privada database url</field>
+      <field name="res_model">add.pkey.ids</field>
+      <field name="view_mode">tree,form</field>
     </record>
 
 
@@ -120,7 +158,9 @@
     <!-- actions -->
 
     <menuitem name="Historial" id="database_url.menu_1_list" parent="his_data" action="data_update"/>
-    
+    <menuitem name="Clave ssh" id="database_url.menu_1_list" parent="his_data" action="ssh_id"/>
+
+
 
   </data>
 </odoo>

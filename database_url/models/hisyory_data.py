@@ -32,8 +32,9 @@ class HistoyUrlDt(models.Model):
     password=fields.Char(string="PASSWORD sftp", required=True)
     sftp_path=fields.Char(string="file path sftp", help="/path/")
     ssh_path =fields.Char(string="file path ssh", help="/home/users/path/")
-    pkey_private = fields.Text(string="Clave privada")
-    password_pkey=fields.Char(string="Password pkey")
+    ssh_ids=fields.Many2one('add.pkey.ids','ssh')
+    pkey_private = fields.Text(related='ssh_ids.pkey_private',string="Clave privada",readonly=True)
+    password_pkey=fields.Char(string="Password pkey",related='ssh_ids.password_pkey', readonly=True)
     file_na=fields.Char(string="filename")
     zip_file = fields.Char(string='Archivo ZIP')
     
@@ -254,7 +255,7 @@ class ObtDatosBakc(models.Model):
             
 class AddPkey(models.Model):
     _name = "add.pkey.ids"
-    _description = "Guardar Clave privada"
+    _description = "Guardar Clave privada database url"
     
    
     name = fields.Char(string="nombre")
@@ -263,7 +264,7 @@ class AddPkey(models.Model):
     edit = fields.Boolean(default=True)
     
     
-    def create_dt(self):
+    def Guardar(self):
         existing_record = self.search([
             ('name', '=', self.name),  
             ('pkey_private', '=', self.pkey_private),
