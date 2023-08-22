@@ -79,7 +79,7 @@ class HistoyUrlDt(models.Model):
 
             except Exception as e:
                 raise UserError("Error:", str(e))
-        return {
+            return {
                                 'type': 'ir.actions.client',
                                 'tag': 'display_notification',
                                 'params': {
