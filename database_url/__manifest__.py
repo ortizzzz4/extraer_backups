@@ -34,4 +34,6 @@
     'demo': [
         'demo/demo.xml',
     ],
+    
+    'images': ['static/description/icon.png'],
 }
