@@ -24,6 +24,9 @@
   
     'data': [
          'security/ir.model.access.csv',
+         
+         'data/cron.xml',
+         
         'views/views.xml',
         'views/templates.xml',
     ],
