@@ -9,7 +9,7 @@
         <tree>
           <field name="url"/>
           <field name="username"/>
-          <field name="password" password="True"/>
+
         </tree>
       </field>
     </record>
