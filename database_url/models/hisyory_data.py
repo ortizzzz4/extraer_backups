@@ -29,7 +29,7 @@ class HistoyUrlDt(models.Model):
     port= fields.Char(string="PORT", default="22")
     username=fields.Char(string="username sftp", required=True,default="root") 
     ssh_username = fields.Char(string="ssh username", default="root")
-    password=fields.Char(string="PASSWORD sftp")
+   # password=fields.Char(string="PASSWORD sftp")
     sftp_path=fields.Char(string="file path sftp", help="ruta donde esta almacenados los backups")
     ssh_path =fields.Char(string="file path ssh", help="ruta para almacenar los backups")
     ssh_ids=fields.Many2one('add.pkey.ids','ssh')
