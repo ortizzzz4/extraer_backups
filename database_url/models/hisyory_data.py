@@ -185,9 +185,11 @@ class ObtDatosBakc(models.Model):
         
         ip_server = database_history_record.url
         username=database_history_record.ssh_username
-        file_path = database_history_record.sftp_path
+        file_path = database_history_record.ssh_path
         pkey_private = database_history_record.pkey_private
         password_pke = database_history_record.password_pkey
+        archivo_remoto = database_history_record.sftp_path
+        
         
         download_folder = os.path.join(os.path.expanduser("~"), "Downloads")
         ruta_destino = "/home/luis/Descargas/"
@@ -209,24 +211,21 @@ class ObtDatosBakc(models.Model):
              
             client.connect(**datos)
             
-            sftp = client.open_sftp()
-
-
-            os.makedirs(download_folder, exist_ok=True)
-            for item in sftp.listdir(file_path):
-                remote_item_path = f"{file_path}/{item}"
-                local_item_path = os.path.join(download_folder, item)
             
-                if sftp.stat(remote_item_path).st_mode & 0o4000:
-                    continue  # Skip symbolic links
-                elif sftp.stat(remote_item_path).st_mode & 0o40000:
-                # If it's a directory, recursively download it
-                    self.download_selected_folder()
-                else:
-                 # If it's a file, download it
-                    sftp.get(remote_item_path, local_item_path)
+
+
+             # Crear la carpeta local si no existe
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
         
-                _logger.info(f"Downloaded folder '{file_path}' to '{download_folder}'")
+        # Rutas de archivo remoto y local
+            archivo_remoto_ruta = archivo_remoto + selected_zip_name
+            archivo_local_ruta = os.path.join(file_path, os.path.basename(archivo_remoto + selected_zip_name))
+        
+        # Descargar el archivo
+            sftp = client.open_sftp()
+            sftp.get(archivo_remoto_ruta, archivo_local_ruta)
+            sftp.close()
 
         except paramiko.AuthenticationException:
             _logger.exception("Error de autenticación. Verifica las credenciales SSH.")
