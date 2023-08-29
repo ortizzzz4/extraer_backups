@@ -220,7 +220,7 @@ class ObtDatosBakc(models.Model):
         
         # Rutas de archivo remoto y local
             archivo_remoto_ruta = archivo_remoto + selected_zip_name
-            archivo_local_ruta = os.path.join(file_path, os.path.basename(archivo_remoto + selected_zip_name))
+            archivo_local_ruta = file_path
         
         # Descargar el archivo
             sftp = client.open_sftp()
