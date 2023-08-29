@@ -27,11 +27,11 @@ class HistoyUrlDt(models.Model):
     
     url=fields.Char(string="IP", help='0.0.0.0', required=True)
     port= fields.Char(string="PORT", default="22")
-    username=fields.Char(string="username sftp", required=True) 
+    username=fields.Char(string="username sftp", required=True,default="root") 
     ssh_username = fields.Char(string="ssh username", default="root")
     password=fields.Char(string="PASSWORD sftp", required=True)
-    sftp_path=fields.Char(string="file path sftp", help="/path/")
-    ssh_path =fields.Char(string="file path ssh", help="/home/users/path/")
+    sftp_path=fields.Char(string="file path sftp", help="ruta donde esta almacenados los backups")
+    ssh_path =fields.Char(string="file path ssh", help="ruta para almacenar los backups")
     ssh_ids=fields.Many2one('add.pkey.ids','ssh')
     pkey_private = fields.Text(related='ssh_ids.pkey_private',string="Clave privada",readonly=True)
     password_pkey=fields.Char(string="Password pkey",related='ssh_ids.password_pkey', readonly=True)
@@ -46,14 +46,16 @@ class HistoyUrlDt(models.Model):
         
         for backups in back:      
             try:
-               
+                
+                private_pke=paramiko.RSAKey(file_obj=io.StringIO(backups.pkey_private), password=backups.password_pkey)
+                
                 remote_folder = backups.sftp_path
                 
                 HOST = str(backups.url)#'157.245.84.13'
                 PUERTO = int(backups.port)
                 USUARIO = str( backups.username)#'rocket'
-                PASSWORD = backups.password
-                datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,password=PASSWORD)
+               # PASSWORD = backups.password
+                datos = dict(hostname=HOST, port=PUERTO, username=USUARIO,pkey=private_pke)
                 client = paramiko.SSHClient()
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
  

@@ -34,12 +34,12 @@
                 <field name="port"/>
                 <field name="sftp_path"/>
                 <field name="username"/>
-                <field name="password" password="True"/>              
+                <field name="ssh_ids"/>              
               </group>
-              <group string="SSH" >
-                <field name="ssh_username"/>
-                <field name="ssh_path"/>
-                <field name="ssh_ids"/>
+              <group>
+                <field name="ssh_username" invisible="1"/>
+                <field name="ssh_path"  />
+                <field name="ssh_ids" invisible="1"/>
                 <field name="password_pkey" password="True"/>
                
               </group>
