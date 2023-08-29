@@ -246,31 +246,64 @@ class ObtDatosBakc(models.Model):
            #         }
    
     def file_zip_dow(self):
+        database_history_obj = self.env['database.history']
+      
+        # Buscamos el registro específico en 'database.history' que queremos utilizar
+        database_history_record = database_history_obj.search([], limit=1)
+        ip_server = database_history_record.url
+        username=database_history_record.ssh_username
+        pkey_private = database_history_record.pkey_private
+        password_pke = database_history_record.password_pkey
+        private_key = paramiko.RSAKey(file_obj=io.StringIO(pkey_private),password=password_pke)
+       
+        HOST=ip_server
+        USERNAME = username
+        PORT=22
+        local_folder="home/luis/"
+        
+        
+        datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
+        _logger.info(datos)
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
+        client.connect(**datos)
+        
+        sftp = client.open_sftp()
+        
         for rec in self:
-            zip_file =rec.file_zip
-
-            # Leer el archivo y codificarlo en base64
-            with open(zip_file, "rb") as reader:
-                result = base64.b64encode(reader.read())
-
+            zip_file_remote_path = rec.file_zip  # Ruta del archivo remoto en el servidor
+        
+        # Crear una conexión SFTP
+        
+        
+        # Descargar el archivo remoto y guardarlo en la carpeta local
+            filename = os.path.basename(zip_file_remote_path)
+            local_filepath = os.path.join(local_folder, filename)
+            sftp.get(zip_file_remote_path, local_filepath)
+        
+        # Cerrar la conexión SFTP
+            sftp.close()
+            client.close()
+        
+        # Crear el objeto de adjunto en Odoo
             attachment_obj = self.env['ir.attachment'].sudo()
-            name = zip_file
             attachment_id = attachment_obj.create({
-                'name': name,
-                'datas': result,
-                'public': False,
-               # 'res_model': 'obtener.backup',  # Reemplaza 'tu.modelo' con el nombre de tu modelo
-                'res_id': rec.id,
-                'mimetype': 'application/zip',  # Cambiar según el tipo de archivo
-            })
-
-            download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+            'name': filename,
+            'datas': base64.b64encode(open(local_filepath, 'rb').read()),
+            'public': False,
+            'res_id': rec.id,
+            'mimetype': 'application/zip',  # Cambiar según el tipo de archivo
+        })
+        
+        # Generar la URL de descarga local
+            local_download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+        
             return {
-                'type': 'ir.actions.act_url',
-                'url': download_url,
-                'target': 'self',
-            }
-            
+            'type': 'ir.actions.act_url',
+            'url': local_download_url,
+            'target': 'self',
+        }
 class AddPkey(models.Model):
     _name = "add.pkey.ids"
     _description = "Guardar Clave privada database url"
