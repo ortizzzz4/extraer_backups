@@ -216,8 +216,8 @@ class ObtDatosBakc(models.Model):
 
              # Crear la carpeta local si no existe
             sftp = client.open_sftp()
-            remote_folder_path = archivo_remoto + file_path
-            local_folder_path = ruta_destino
+            remote_folder_path = archivo_remoto/self.file_zip
+            local_folder_path = file_path
 
                 # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
             sftp.get(remote_folder_path, local_folder_path)
