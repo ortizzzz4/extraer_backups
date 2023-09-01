@@ -93,7 +93,7 @@ class HistoyUrlDt(models.Model):
 
     @api.model
     def schedule_file(self):
-        functio = self.search_read([])
+        functio = self.search([])
         
         for rec in functio:
             rec.sftp_fetch_and_save_zip()
