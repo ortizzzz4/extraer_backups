@@ -12,6 +12,7 @@ from pathlib import Path
 from stat import S_ISDIR
 import io
 
+
 import zipfile
 
 import pwd
@@ -201,7 +202,7 @@ class ObtDatosBakc(models.Model):
         
         private_key = paramiko.RSAKey(file_obj=io.StringIO(pkey_private),password=password_pke)
        
-        user_downloads = os.path.expanduser("~/Descargas")
+        
         datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
         _logger.info(datos)
         client = paramiko.SSHClient()
@@ -216,10 +217,12 @@ class ObtDatosBakc(models.Model):
 
              # Crear la carpeta local si no existe
             sftp = client.open_sftp()
+            user= (Path('C:', '/', 'Users'))
+
          
             remote_file_path = os.path.join(archivo_remoto, selected_zip_name)
-          
-            local_file_path = os.path.join(user_downloads)
+            user_downloads = os.path.expanduser("~/Descargas")
+            local_file_path = os.path.join(user)
 
                 # Descargar el archivo .zip seleccionado
                 # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
