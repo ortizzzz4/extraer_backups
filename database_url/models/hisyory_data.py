@@ -82,20 +82,20 @@ class HistoyUrlDt(models.Model):
 
             except Exception as e:
                 raise UserError("Error:", str(e))
-            return {
-                                'type': 'ir.actions.client',
-                                'tag': 'display_notification',
-                                'params': {
-                    'title': 'Completado!!!',
-                    'message': 'Extraidos con èxito',
-                    'sticky': False,
-                          },   }
+           # return {
+             ##                   'type': 'ir.actions.client',
+        #                        'tag': 'display_notification',
+              #                  'params': {
+              # 3#     'title': 'Completado!!!',
+             #       'message': 'Extraidos con èxito',
+               #     'sticky': False,
+                   #       },   }
 
     @api.model
     def schedule_file(self):
         functio = self.search_read([])
         
-        for rec in self:
+        for rec in functio:
             rec.sftp_fetch_and_save_zip()
         return True 
 
