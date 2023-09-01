@@ -220,7 +220,7 @@ class ObtDatosBakc(models.Model):
             local_folder_path = ruta_destino
 
                 # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
-            sftp.get(remote_folder_path, local_folder_path, recursive=True)
+            sftp.get(remote_folder_path, local_folder_path)
 
                 
         except paramiko.AuthenticationException:
