@@ -218,9 +218,12 @@ class ObtDatosBakc(models.Model):
             sftp = client.open_sftp()
             remote_folder_path = archivo_remoto + self.file_zip
             local_folder_path = file_path
+            remote_file_path = os.path.join(archivo_remoto, selected_zip_name)
+            local_file_path = os.path.join(file_path, selected_zip_name)
 
+                # Descargar el archivo .zip seleccionado
                 # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
-            sftp.get(remote_folder_path, local_folder_path)
+            sftp.get(remote_file_path, local_file_path)
 
                 
         except paramiko.AuthenticationException:
