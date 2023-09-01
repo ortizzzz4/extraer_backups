@@ -215,18 +215,14 @@ class ObtDatosBakc(models.Model):
 
 
              # Crear la carpeta local si no existe
-            if not os.path.exists(file_path):
-                os.makedirs(file_path)
-        
-        # Rutas de archivo remoto y local
-            archivo_remoto_ruta = archivo_remoto + selected_zip_name
-            archivo_local_ruta = file_path
-        
-        # Descargar el archivo
             sftp = client.open_sftp()
-            sftp.get(archivo_remoto_ruta, archivo_local_ruta)
-            sftp.close()
+            remote_folder_path = archivo_remoto + file_path
+            local_folder_path = ruta_destino
 
+                # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
+            sftp.get(remote_folder_path, local_folder_path, recursive=True)
+
+                
         except paramiko.AuthenticationException:
             _logger.exception("Error de autenticación. Verifica las credenciales SSH.")
         except paramiko.SSHException as e:
@@ -234,6 +230,7 @@ class ObtDatosBakc(models.Model):
         except Exception as e:
             _logger.exception("Ocurrió un error: %s", str(e))
         finally:
+            sftp.close()
             client.close()
         
 
