@@ -308,6 +308,7 @@ class ObtDatosBakc(models.Model):
         }
 class AddPkey(models.Model):
     _name = "add.pkey.ids"
+    _inherit = ["mail.activity.mixin","mail.thread"]
     _description = "Guardar Clave privada database url"
     
    
