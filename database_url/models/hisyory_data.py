@@ -217,16 +217,15 @@ class ObtDatosBakc(models.Model):
 
              # Crear la carpeta local si no existe
             sftp = client.open_sftp()
-            user= (Path('C:', '/', 'Users'))
+            for archivo in sftp.listdir(archivo_remoto):
+                ruta_archivo_remoto = os.path.join(archivo_remoto, archivo)
+                ruta_archivo_local = os.path.join(ruta_destino, archivo)
+                sftp.get(ruta_archivo_remoto, ruta_archivo_local)
+        
+   
+     
 
-         
-            remote_file_path = os.path.join(archivo_remoto, selected_zip_name)
-            user_downloads = os.path.expanduser("~/Descargas")
-            local_file_path = os.path.join(user)
-
-                # Descargar el archivo .zip seleccionado
-                # Descargar archivos de forma recursiva desde la carpeta remota a la carpeta local
-            sftp.get(remote_file_path, local_file_path)
+        
 
                 
         except paramiko.AuthenticationException:
