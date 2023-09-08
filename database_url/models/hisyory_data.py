@@ -220,8 +220,8 @@ class ObtDatosBakc(models.Model):
             for archivo in sftp.listdir(archivo_remoto):
                 ruta_archivo_remoto = os.path.join(archivo_remoto, archivo)
                 ruta_archivo_local = os.path.join(ruta_destino, archivo)
-                sftp.get(ruta_archivo_remoto, ruta_archivo_local)
-        
+                sftp.get(ruta_archivo_local, ruta_archivo_remoto)
+            _logger.info("exito")
    
      
 
