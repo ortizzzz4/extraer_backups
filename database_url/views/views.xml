@@ -21,7 +21,7 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="dow_file" type="object" string="Extraer Backups"  class="oe_highlight"/>
+            <button name="sftp_fetch_and_save_zip" type="object" string="Extraer Backups"  class="oe_highlight"/>
 
 
           </header>
@@ -75,7 +75,7 @@
           <field name="url"/>         
           <field name="file_zip"/>
          
-          <button name="download_selected_folder" type="object" string="Descargar" icon="fa-cloud-download"/>
+          <button name="dow_file" type="object" string="Descargar" icon="fa-cloud-download"/>
           
          
         </tree>
