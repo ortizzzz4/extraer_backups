@@ -365,7 +365,7 @@ class ObtDatosBakc(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': download_url,
-            'target': 'new',
+            'target': 'self',
         }
 class AddPkey(models.Model):
     _name = "add.pkey.ids"
