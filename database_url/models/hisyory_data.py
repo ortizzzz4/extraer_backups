@@ -330,7 +330,7 @@ class ObtDatosBakc(models.Model):
         datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
         
         remote_path=archivo_remoto + selected_zip_name
-        
+        _logger.info(remote_path)
         try:
           
             client = paramiko.SSHClient()
