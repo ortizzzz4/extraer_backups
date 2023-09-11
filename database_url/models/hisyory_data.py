@@ -308,19 +308,31 @@ class ObtDatosBakc(models.Model):
             
             
             
-    def dow_file(self):
-       
-        file_path = self.file_zip
+    def download_file(self):
+        remote_file_path = 'data/' + self.file_zip  # Reemplaza esto con la ruta remota real
         result = None
-        with open(file_path , 'rb') as reader:
-            result = base64.b64encode(reader.read())
+        try:
+            with open(remote_file_path, 'rb') as reader:
+                result = base64.b64encode(reader.read())
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'type': 'danger',
+                    'message': f'Error al abrir el archivo remoto: {str(e)}'
+                }
+            }
+
         attachment_obj = self.env['ir.attachment'].sudo()
-        name = self.file_zip
+        name = self.file_zip # Reemplaza esto con el nombre que desees para el archivo adjunto
         attachment_id = attachment_obj.create({
             'name': name,
             'datas': result,
             'public': False
         })
+
         download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
         return {
             'type': 'ir.actions.act_url',

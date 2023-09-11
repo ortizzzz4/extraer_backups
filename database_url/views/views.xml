@@ -68,16 +68,13 @@
       <field name="name">obtner_backups.tree</field>
       <field name="model">obtener.backup</field>
       <field name="arch" type="xml">
-        <tree create="false" 
-        default_order='create_date'
-         >
-          
+        <tree create="false" default_order='create_date' >        
           <field name="url"/>         
           <field name="file_zip"/>
-         
+        
           <button name="dow_file" type="object" string="Descargar" icon="fa-cloud-download"/>
-          
-         
+        
+        
         </tree>
       </field>
     </record>
