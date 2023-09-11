@@ -175,7 +175,8 @@ class ObtDatosBakc(models.Model):
    
             
     
-  
+    
+    #Funcion manera local - remota
     def download_selected_folder(self):
         database_history_obj = self.env['database.history']
       
@@ -189,8 +190,7 @@ class ObtDatosBakc(models.Model):
         file_path = database_history_record.ssh_path
         pkey_private = database_history_record.pkey_private
         password_pke = database_history_record.password_pkey
-        archivo_remoto = database_history_record.sftp_path
-        
+        archivo_remoto = database_history_record.sftp_path 
         
         download_folder = os.path.join(os.path.expanduser("~"), "Downloads")
         ruta_destino = "/home/luis/Descargas/"
@@ -217,10 +217,10 @@ class ObtDatosBakc(models.Model):
 
              # Crear la carpeta local si no existe
             sftp = client.open_sftp()
-            for archivo in sftp.listdir(archivo_remoto):
-                ruta_archivo_remoto = os.path.join(archivo_remoto, archivo)
-                ruta_archivo_local = os.path.join(ruta_destino, archivo)
-                sftp.get(ruta_archivo_local, ruta_archivo_remoto)
+            
+            ruta_archivo_remoto = os.path.join(archivo_remoto, selected_zip_name)
+            ruta_archivo_local = os.path.join(ruta_destino, selected_zip_name)
+            sftp.get(ruta_archivo_remoto, ruta_destino)
             _logger.info("exito")
    
      
@@ -235,7 +235,7 @@ class ObtDatosBakc(models.Model):
         except Exception as e:
             _logger.exception("Ocurrió un error: %s", str(e))
         finally:
-            sftp.close()
+          
             client.close()
         
 
@@ -304,6 +304,28 @@ class ObtDatosBakc(models.Model):
             'type': 'ir.actions.act_url',
             'url': local_download_url,
             'target': 'self',
+        }
+            
+            
+            
+    def dow_file(self):
+       
+        file_path = self.file_zip
+        result = None
+        with open(file_path , 'rb') as reader:
+            result = base64.b64encode(reader.read())
+        attachment_obj = self.env['ir.attachment'].sudo()
+        name = self.file_zip
+        attachment_id = attachment_obj.create({
+            'name': name,
+            'datas': result,
+            'public': False
+        })
+        download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+        return {
+            'type': 'ir.actions.act_url',
+            'url': download_url,
+            'target': 'new',
         }
 class AddPkey(models.Model):
     _name = "add.pkey.ids"

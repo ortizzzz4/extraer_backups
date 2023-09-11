@@ -21,7 +21,7 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="sftp_fetch_and_save_zip" type="object" string="Extraer Backups"  class="oe_highlight"/>
+            <button name="dow_file" type="object" string="Extraer Backups"  class="oe_highlight"/>
 
 
           </header>
