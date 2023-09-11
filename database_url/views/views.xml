@@ -72,7 +72,7 @@
           <field name="url"/>         
           <field name="file_zip"/>
         
-          <button name="dow_file" type="object" string="Descargar" icon="fa-cloud-download"/>
+          <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
         
         
         </tree>
