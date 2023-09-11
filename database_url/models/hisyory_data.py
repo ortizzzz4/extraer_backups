@@ -309,11 +309,39 @@ class ObtDatosBakc(models.Model):
             
             
     def download_file(self):
-        remote_file_path = 'data/' + self.file_zip  # Reemplaza esto con la ruta remota real
-        result = None
+        database_history_obj = self.env['database.history']
+      
+        # Buscamos el registro específico en 'database.history' que queremos utilizar
+        database_history_record = database_history_obj.search([], limit=1)
+        
+        selected_zip_name = self.file_zip  # Nombre del archivo .zip
+        
+        ip_server = database_history_record.url
+        username=database_history_record.ssh_username
+        file_path = database_history_record.ssh_path
+        pkey_private = database_history_record.pkey_private
+        password_pke = database_history_record.password_pkey
+        archivo_remoto = database_history_record.sftp_path 
+        
+        HOST=ip_server
+        USERNAME = username
+        PORT=22
+        private_key = paramiko.RSAKey(file_obj=io.StringIO(pkey_private),password=password_pke)       
+        datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
+        
+        remote_path=archivo_remoto + selected_zip_name
+        
         try:
-            with open(remote_file_path, 'rb') as reader:
-                result = base64.b64encode(reader.read())
+          
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(**datos)
+            sftp = client.open_sftp()
+            remote_file = sftp.file(remote_path, 'rb')
+            result = base64.b64encode(remote_file.read())
+            remote_file.close()
+            sftp.close()
+            client.close()
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -321,12 +349,12 @@ class ObtDatosBakc(models.Model):
                 'params': {
                     'title': 'Error',
                     'type': 'danger',
-                    'message': f'Error al abrir el archivo remoto: {str(e)}'
+                    'message': f'Error al descargar el archivo remoto: {str(e)}'
                 }
             }
 
         attachment_obj = self.env['ir.attachment'].sudo()
-        name = self.file_zip # Reemplaza esto con el nombre que desees para el archivo adjunto
+        name = selected_zip_name
         attachment_id = attachment_obj.create({
             'name': name,
             'datas': result,
