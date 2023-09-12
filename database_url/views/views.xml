@@ -68,13 +68,11 @@
       <field name="name">obtner_backups.tree</field>
       <field name="model">obtener.backup</field>
       <field name="arch" type="xml">
-        <tree create="false" default_order='create_date' >        
+        <tree create="false">  
+          <filter string="Day" domain="[ ]" context="{'group_by': 'create_date:day'}" />      
           <field name="url"/>         
-          <field name="file_zip"/>
-        
-          <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
-        
-        
+          <field name="file_zip"/>      
+          <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>     
         </tree>
       </field>
     </record>
@@ -94,11 +92,19 @@
                 <field name="password_pkey" password="True"/>
               </group>
               <group>
-                <field name="pkey_private" attrs="{'invisible': [('pkey_private','!=',False)]}" />
               </group>
+
+              <notebook>
+                <page  string="clave privada ssh">
+                  <group >
+                    <field name="pkey_private" attrs="{'invisible': [('pkey_private','!=',False)]}" />
+                  </group>
+                </page>
+              </notebook>
 
 
             </group>
+
 
            
            

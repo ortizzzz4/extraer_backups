@@ -42,6 +42,9 @@ class HistoyUrlDt(models.Model):
 
     
     def sftp_fetch_and_save_zip(self):
+        """
+        Obtener todos los backups
+        """
         
         back = self.search([])
         
@@ -94,68 +97,16 @@ class HistoyUrlDt(models.Model):
 
     @api.model
     def schedule_file(self):
-        functio = self.search([])
-        
+        """
+        Cron para extraer los backups
+        """
+        functio = self.search([])     
         for rec in functio:
             rec.sftp_fetch_and_save_zip()
         return True 
 
 
-    
-    """def extraer_datos(self):
-        my_models = self.search([])
-        if not my_models:
-            return False
-        
-        processed_totals = {}
-     
-        for my_model in my_models:
-            db = my_model.name
-            username = my_model.username
-            url = my_model.url
-            password = my_model.password
-            
-            
-            try:
-                common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(url))
-                models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(url))
-            except Exception as e:
-                _logger.error('Error de conexión: %s', str(e))
-                return True
-            
-            
-            
-            
-            try:
-                uid = common.authenticate(db,username, password ,[])
-            except Exception as e:
-                _logger.error('Error de autenticación en la base de datos %s: %s', db, str(e))
-                continue
-            
-            try:
-                backups = models.execute_kw(db, uid, password, 'db.backup.configure', 'search', [[]])
-                company_ids = models.execute_kw(db, uid, password, 'res.company', 'search', [[]])
-            except Exception as e:
-                _logger.error('Error al obtener datos de la base de datos %s: %s', db, str(e)) 
-                continue
-            
-            for bk in backups:
-                try:
-                    backup = models.execute_kw(db, uid, password, 'db.backup.configure', 'read', [bk, ['backup_filename']])
-                    print(backup)  # Agregar esta línea para inspeccionar el valor de 'backup'
-    
-                    datos = self.env['obtener.backup'].create({
-                    'name': db,
-                    'url': url,
-                    'file_name':backup[0]['backup_filename']
-                        })
-                    _logger.info('Datos guardados')
-                except Exception as e:
-                    _logger.error('Error al leer los datos del movimiento de cuenta en la base de datos %s: %s', db, str(e))
-                    continue
-               
-               """
-               
+
 class ObtDatosBakc(models.Model):
     _name = "obtener.backup"
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -167,10 +118,6 @@ class ObtDatosBakc(models.Model):
     
     record_ids = fields.Many2one('database.history', 'fields')
     
-    #url =fields.Char(related='record_ids.url', string='IP', readonly=True)
-    #ssh_username=fields.Char(related='record_ids.ssh_username',string="ssh username" ,readonly=True)
-    #ssh_path =fields.Char(related='record_ids.ssh_path', string="ssh path", readonly=True)
-    
     url = fields.Char(string="IP", readonly=True)
    
             
@@ -178,6 +125,9 @@ class ObtDatosBakc(models.Model):
     
     #Funcion manera local - remota
     def download_selected_folder(self):
+        """
+        Funcion para descargar backups, ejecuntado local
+        """
         database_history_obj = self.env['database.history']
       
         # Buscamos el registro específico en 'database.history' que queremos utilizar
@@ -193,7 +143,7 @@ class ObtDatosBakc(models.Model):
         archivo_remoto = database_history_record.sftp_path 
         
         download_folder = os.path.join(os.path.expanduser("~"), "Downloads")
-        ruta_destino = "/home/luis/Descargas/"
+        ruta_destino = "/home/luis/Descargas/" # cambiar ruta destino local
 
         HOST=ip_server
         USERNAME = username
@@ -246,69 +196,13 @@ class ObtDatosBakc(models.Model):
           #      'target': 'self',
            #         }
    
-    def file_zip_dow(self):
-        database_history_obj = self.env['database.history']
-      
-        # Buscamos el registro específico en 'database.history' que queremos utilizar
-        database_history_record = database_history_obj.search([], limit=1)
-        ip_server = database_history_record.url
-        username=database_history_record.ssh_username
-        pkey_private = database_history_record.pkey_private
-        password_pke = database_history_record.password_pkey
-        private_key = paramiko.RSAKey(file_obj=io.StringIO(pkey_private),password=password_pke)
-       
-        HOST=ip_server
-        USERNAME = username
-        PORT=22
-        local_folder="home/luis/"
-        
-        
-        datos = dict(hostname=HOST, port=PORT, username=USERNAME,pkey=private_key)
-        _logger.info(datos)
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        
-        client.connect(**datos)
-        
-        sftp = client.open_sftp()
-        
-        for rec in self:
-            zip_file_remote_path = rec.file_zip  # Ruta del archivo remoto en el servidor
-        
-        # Crear una conexión SFTP
-        
-        
-        # Descargar el archivo remoto y guardarlo en la carpeta local
-            filename = os.path.basename(zip_file_remote_path)
-            local_filepath = os.path.join(local_folder, filename)
-            sftp.get(zip_file_remote_path, local_filepath)
-        
-        # Cerrar la conexión SFTP
-            sftp.close()
-            client.close()
-        
-        # Crear el objeto de adjunto en Odoo
-            attachment_obj = self.env['ir.attachment'].sudo()
-            attachment_id = attachment_obj.create({
-            'name': filename,
-            'datas': base64.b64encode(open(local_filepath, 'rb').read()),
-            'public': False,
-            'res_id': rec.id,
-            'mimetype': 'application/zip',  # Cambiar según el tipo de archivo
-        })
-        
-        # Generar la URL de descarga local
-            local_download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
-        
-            return {
-            'type': 'ir.actions.act_url',
-            'url': local_download_url,
-            'target': 'self',
-        }
-            
+   
             
             
     def download_file(self):
+        """
+        Funcion ejecutando codigo remoto,
+        """
         database_history_obj = self.env['database.history']
       
         # Buscamos el registro específico en 'database.history' que queremos utilizar
@@ -368,6 +262,9 @@ class ObtDatosBakc(models.Model):
             'target': 'self',
         }
 class AddPkey(models.Model):
+    """
+    Model para guardar la clave privada, conectarse remoto
+    """
     _name = "add.pkey.ids"
     _inherit = ["mail.activity.mixin","mail.thread"]
     _description = "Guardar Clave privada database url"
