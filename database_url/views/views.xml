@@ -117,6 +117,16 @@
       </field>
     </record>
 
+    <record id="backups_search" model="ir.ui.view">
+      <field name="name">backups.search</field>
+      <field name="model">obtener.backup</field>
+      <field name="arch" type="xml">
+        <search string="">
+          <field name="file_zip"/>
+        </search>
+      </field>
+    </record>
+
     <record id="add_id_tree" model="ir.ui.view">
       <field name="name">Guardar Clave privada database url</field>
       <field name="model">add.pkey.ids</field>
