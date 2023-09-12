@@ -75,6 +75,23 @@
         </tree>
       </field>
     </record>
+   <record id="back_name_view_kanban" model="ir.ui.view">
+    <field name="name">model.name.view.kanban</field>
+    <field name="model">obtener.backup</field>
+    <field name="arch" type="xml">
+      <kanban>
+        <field name="url"/>         
+        <field name="file_zip"/>      
+        <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
+        <templates>
+          <t t-name="kanban-box">
+            
+          </t>
+        </templates>
+      </kanban>
+    </field>
+   </record>
+
 
     <record id="add_ids_pke_form" model="ir.ui.view">
       <field name="name">Guardar Clave privada database url</field>
@@ -127,6 +144,8 @@
       </field>
     </record>
 
+    
+
     <record id="add_id_tree" model="ir.ui.view">
       <field name="name">Guardar Clave privada database url</field>
       <field name="model">add.pkey.ids</field>
@@ -150,7 +169,7 @@
     <record model="ir.actions.act_window" id="data_update">
       <field name="name">Historial de backups</field>
       <field name="res_model">obtener.backup</field>
-      <field name="view_mode">tree</field>
+      <field name="view_mode">tree,kanban</field>
     </record>
 
     <record model="ir.actions.act_window" id="ssh_id">
