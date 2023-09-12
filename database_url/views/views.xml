@@ -85,18 +85,20 @@
         <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
         <templates>
           <t t-name="kanban-box">
-            <div t-attf-class="oe_kanban_global_click">
+            <div t-attf-class="oe_kanban_global_click" 
+            style="background: rgb(2,0,36);
+            background: linear-gradient(18deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);">
               <div class="oe_kanban_details">
                   <ul>
                       <li>
-                          url: <field name="url"/>
+                         <field name="url"/>
                       </li>
                       <li>
-                          file: <field name="file_zip"/>
+                          <field name="file_zip"/>
                       </li>
       
                       <li>
-                          Descargar <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>/>
+                        <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
                       </li>
                   </ul>
               </div>
@@ -184,7 +186,7 @@
     <record model="ir.actions.act_window" id="data_update">
       <field name="name">Historial de backups</field>
       <field name="res_model">obtener.backup</field>
-      <field name="view_mode">tree,kanban</field>
+      <field name="view_mode">kanban,tree</field>
     </record>
 
     <record model="ir.actions.act_window" id="ssh_id">
