@@ -91,10 +91,10 @@
             ">
               <div class="oe_kanban_details">
                   <ul style="color:#000000">
-                      <li>
+                      <li style="font-size:15px">
                          <field name="url"/>
                       </li>
-                      <li>
+                      <li style="font-size:15px">
                           <field name="file_zip"/>
                       </li>
       
