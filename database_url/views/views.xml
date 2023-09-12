@@ -69,7 +69,6 @@
       <field name="model">obtener.backup</field>
       <field name="arch" type="xml">
         <tree create="false">  
-          <filter string="Day" domain="[ ]" context="{'group_by': 'create_date:day'}" />      
           <field name="url"/>         
           <field name="file_zip"/>      
           <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>     
