@@ -94,9 +94,7 @@
                       <li>
                           file: <field name="file_zip"/>
                       </li>
-                      <li>
-                          Age: <field name="age"/>
-                      </li>
+      
                       <li>
                           Descargar <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>/>
                       </li>
