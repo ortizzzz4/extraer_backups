@@ -85,7 +85,24 @@
         <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
         <templates>
           <t t-name="kanban-box">
-            
+            <div t-attf-class="oe_kanban_global_click">
+              <div class="oe_kanban_details">
+                  <ul>
+                      <li>
+                          url: <field name="url"/>
+                      </li>
+                      <li>
+                          file: <field name="file_zip"/>
+                      </li>
+                      <li>
+                          Age: <field name="age"/>
+                      </li>
+                      <li>
+                          Descargar <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>/>
+                      </li>
+                  </ul>
+              </div>
+          </div>
           </t>
         </templates>
       </kanban>
