@@ -79,7 +79,7 @@
     <field name="name">model.name.view.kanban</field>
     <field name="model">obtener.backup</field>
     <field name="arch" type="xml">
-      <kanban>
+      <kanban create="false">
         <field name="url"/>         
         <field name="file_zip"/>      
         <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download"/>
@@ -88,11 +88,9 @@
             <div t-attf-class="oe_kanban_global_click" 
             style="background: rgb(2,0,36);
             background: linear-gradient(18deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 0%, rgba(3,136,205,1) 90%, rgba(9,13,124,1) 100%, rgba(9,9,121,1) 100%);
-            color:#020024;
-            font-size:15px;
             ">
               <div class="oe_kanban_details">
-                  <ul>
+                  <ul style="color:#000000">
                       <li>
                          <field name="url"/>
                       </li>
