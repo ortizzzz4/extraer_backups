@@ -95,20 +95,14 @@
                   <ul style="color:#000000">
                   
                       <li style="font-size:13px">
-                        IP <field name="url"/>
+                        IP | <field name="url"/>
                       </li>
                       <li style="font-size:13px">
-                        FILE  <field name="file_zip"/>
+                        FILE | <field name="file_zip"/>
                       </li>
       
-                      <li>
-                      <button name="download_file" type="object" string="Descargar"
-                      style="
-                      background: rgb(0,0,0);
-                      background: linear-gradient(18deg, rgba(0,0,0,1) 0%, rgba(0,212,255,1) 44%, rgba(3,136,205,1) 47%, rgba(9,13,124,1) 81%, rgba(9,13,124,1) 87%, rgba(9,9,121,1) 100%);
-                      "
-                    
-                        icon="fa-cloud-download" />
+                      <li style="font-size:15px">
+                      <button name="download_file" type="object" string="Descargar" icon="fa-cloud-download" />
                       
                       </li>
                   </ul>
